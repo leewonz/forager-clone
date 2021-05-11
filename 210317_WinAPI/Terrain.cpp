@@ -17,6 +17,10 @@ void Terrain::Update()
 {
 }
 
+void Terrain::Updatef()
+{
+}
+
 void Terrain::Render(HDC hdc)
 {
 	if (isLand)

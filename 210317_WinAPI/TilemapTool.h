@@ -22,7 +22,6 @@ private:
 	RECT rcSample;
 
 	// 메인타일의 정보
-	static TILE_INFO tileInfo[TILE_X * TILE_Y];
 	RECT rcMain;
 
 	POINT ptStartSelectedFrame;
@@ -41,9 +40,6 @@ public:
 	virtual void Release();
 	virtual void Update();
 	virtual void Render(HDC hdc);
-
-	static void Save(int stageNum);
-	static void Load(int stageNum);
 
 	virtual ~TilemapTool() {};
 };

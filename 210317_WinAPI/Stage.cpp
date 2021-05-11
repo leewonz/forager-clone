@@ -65,7 +65,8 @@ void Stage::Save()
     HANDLE hFile = CreateFile(fileName.c_str(), GENERIC_WRITE, 0,
         0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
     /*void**/
-    WriteFile(hFile, TerrainTiles, sizeof(Terrain) * TILE_X * TILE_Y,
+    EncodeTerrain();
+    WriteFile(hFile, this->code, sizeof(int) * TILE_X * TILE_Y,
         &writtenBytes, NULL);
 
     CloseHandle(hFile);
@@ -81,24 +82,54 @@ void Stage::Load()
     HANDLE hFile = CreateFile(fileName.c_str(), GENERIC_READ, 0,
         0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
     /*void**/
-    if (ReadFile(hFile, TerrainTiles, sizeof(Terrain) * TILE_X * TILE_Y,
+
+    if (ReadFile(hFile, this->code, sizeof(int) * TILE_X * TILE_Y,
         &readBytes, NULL))
     {
+        DecodeTerrain(this->code);
     }
     else
     {
         MessageBox(g_hWnd, "저장파일 로드 실패", "실패", MB_OK);
     }
+    HRESULT err = GetLastError();
+    int errInt = (int)err;
+
+    CloseHandle(hFile);
+}
+
+int* Stage::EncodeTerrain()
+{
+    int* code;
+    code = new int[TILE_Y * TILE_X];
 
     for (int y = 0; y < TILE_Y; y++)
     {
         for (int x = 0; x < TILE_X; x++)
         {
+            int currCode = 0;
+            currCode += (int)TerrainTiles[y][x].GetTerrainType();
+            currCode += TerrainTiles[y][x].GetIsLand() ? (int)TerrainType::END : 0;
+            this->code[y * TILE_X + x] = currCode;
+        }
+    }
+    return code;
+}
+
+void Stage::DecodeTerrain(int* code)
+{
+    for (int y = 0; y < TILE_Y; y++)
+    {
+        for (int x = 0; x < TILE_X; x++)
+        {
+            int currCode = this->code[y * TILE_X + x];
+            TerrainTiles[y][x].SetTerrainType(
+                (TerrainType)(currCode % (int)TerrainType::END));
+            TerrainTiles[y][x].SetIsLand(
+                (currCode / (int)TerrainType::END) == 1 ? true : false);
             TerrainTiles[y][x].SetStage(this);
         }
     }
-
-    CloseHandle(hFile);
 }
 
 void Stage::InitInfo()

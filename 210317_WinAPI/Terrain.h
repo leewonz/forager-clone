@@ -16,6 +16,7 @@ public:
 	virtual HRESULT Init(Stage* parentStage);
 	virtual void Release();
 	virtual void Update();
+	void Updatef();
 	virtual void Render(HDC hdc);
 
 	void SetTerrainType(TerrainType type);

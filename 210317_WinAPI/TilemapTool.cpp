@@ -4,8 +4,6 @@
 #include "Button.h"
 #include "Stage.h"
 
-TILE_INFO TilemapTool::tileInfo[TILE_X * TILE_Y];
-
 HRESULT TilemapTool::Init()
 {
     SetClientRect(g_hWnd, TILEMAPTOOLSIZE_X, TILEMAPTOOLSIZE_Y);
@@ -15,21 +13,6 @@ HRESULT TilemapTool::Init()
     hSelectedBrush = (HBRUSH)GetStockObject(NULL_BRUSH);
 
     // 메인 공간 렉트 설정
-    for (int i = 0; i < TILE_Y; i++)
-    {
-        for (int j = 0; j < TILE_X; j++)
-        {
-            tileInfo[i * TILE_X + j].frameX = 3;
-            tileInfo[i * TILE_X + j].frameY = 0;
-
-            tileInfo[i * TILE_X + j].rcTile.left = TILESIZE * j;
-            tileInfo[i * TILE_X + j].rcTile.top = TILESIZE * i;
-            tileInfo[i * TILE_X + j].rcTile.right = 
-                tileInfo[i * TILE_X + j].rcTile.left + TILESIZE;
-            tileInfo[i * TILE_X + j].rcTile.bottom = 
-                tileInfo[i * TILE_X + j].rcTile.top + TILESIZE;
-        }
-    }
     stage = new Stage();
     stage->Init(POINT{ TILESIZE, TILESIZE });
 
@@ -63,15 +46,15 @@ HRESULT TilemapTool::Init()
     ImageManager::GetSingleton()->AddImage("불러오기버튼", "Image/button.bmp",
         122, 62, 1, 2);
 
-    btnSave = new Button();
-    btnSave->Init("저장버튼", TILEMAPTOOLSIZE_X - sampleTile->GetWidth() - 200,
-        TILEMAPTOOLSIZE_Y - 200);
-    btnSave->SetFunc(Save, 1);
+    //btnSave = new Button();
+    //btnSave->Init("저장버튼", TILEMAPTOOLSIZE_X - sampleTile->GetWidth() - 200,
+    //    TILEMAPTOOLSIZE_Y - 200);
+    //btnSave->SetFunc(Save, 1);
 
-    btnLoad = new Button();
-    btnLoad->Init("불러오기버튼", TILEMAPTOOLSIZE_X - sampleTile->GetWidth(),
-        TILEMAPTOOLSIZE_Y - 200);
-    btnLoad->SetFunc(Load, 1);
+    //btnLoad = new Button();
+    //btnLoad->Init("불러오기버튼", TILEMAPTOOLSIZE_X - sampleTile->GetWidth(),
+    //    TILEMAPTOOLSIZE_Y - 200);
+    //btnLoad->SetFunc(Load, 1);
 
     return S_OK;
 }
@@ -166,7 +149,11 @@ void TilemapTool::Update()
             ptSelected[1] = g_ptMouse;
         }
     }
-
+    else if (KeyManager::GetSingleton()->IsStayKeyDown('P'))
+    {
+        SceneManager::GetSingleton()->ChangeScene("전투_1");
+    }
+    return;
 }
 
 void TilemapTool::Render(HDC hdc)
@@ -230,40 +217,3 @@ void TilemapTool::Render(HDC hdc)
 
     실습2. 로드는 Ctrl + F1, ... 
 */
-
-void TilemapTool::Save(int stageNum)
-{
-    string fileName = "Save/saveMapData";  // 1.map";
-    fileName += to_string(stageNum) + ".map";
-
-    DWORD writtenBytes;
-    HANDLE hFile = CreateFile(fileName.c_str(), GENERIC_WRITE, 0,
-        0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-    /*void**/
-    WriteFile(hFile, tileInfo, sizeof(TILE_INFO) * TILE_X * TILE_Y,
-        &writtenBytes, NULL);
-
-    CloseHandle(hFile);
-}
-
-void TilemapTool::Load(int stageNum)
-{
-    string fileName = "Save/saveMapData";  // 1.map";
-    fileName += to_string(stageNum) + ".map";
-
-    DWORD readBytes;
-    HANDLE hFile = CreateFile(fileName.c_str(), GENERIC_READ, 0,
-        0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-    /*void**/
-    if (ReadFile(hFile, tileInfo, sizeof(TILE_INFO) * TILE_X * TILE_Y,
-        &readBytes, NULL))
-    {
-
-    }
-    else
-    {
-        MessageBox(g_hWnd, "저장파일 로드 실패", "실패", MB_OK);
-    }
-
-    CloseHandle(hFile);
-}

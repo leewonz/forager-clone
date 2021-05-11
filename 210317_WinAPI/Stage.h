@@ -10,6 +10,7 @@ class Stage : public GameNode
 private:
 	Terrain TerrainTiles[TILE_Y][TILE_X];
 	vector<TerrainInfo*> TerrainInfos;
+	int code[TILE_Y * TILE_X];
 
 	void InitInfo();
 
@@ -21,6 +22,9 @@ public:
 
 	void Save();
 	void Load();
+
+	int* EncodeTerrain();
+	void DecodeTerrain(int* code);
 
 	TerrainInfo* GetTerrainInfo(TerrainType i);
 	void ChangeTerrain(POINT posIdx, TerrainType type, bool isLand);
