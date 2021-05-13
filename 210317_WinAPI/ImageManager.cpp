@@ -27,6 +27,11 @@ HRESULT ImageManager::Init()
         "Image/tile_graveyard.bmp", 100, 80, 5, 4,
         false, RGB(255, 0, 255));
 
+    ImageManager::GetSingleton()->AddImage("sampleBuilding",
+        "Image/sampleBuilding.bmp", 30, 42, 
+        false, RGB(255, 0, 255));
+    
+
     return S_OK;
 }
 

@@ -149,10 +149,12 @@ void TilemapTool::Update()
             ptSelected[1] = g_ptMouse;
         }
     }
-    else if (KeyManager::GetSingleton()->IsStayKeyDown('P'))
+
+    if (KeyManager::GetSingleton()->IsOnceKeyDown('P'))
     {
         SceneManager::GetSingleton()->ChangeScene("ÀüÅõ_1");
     }
+
     return;
 }
 

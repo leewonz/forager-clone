@@ -18,6 +18,10 @@ using namespace std;
 #include "TimerManager.h"
 #include "SceneManager.h"
 
+namespace Con
+{
+	
+}
 // 샘플 타일 정보
 // 640 * 288
 #define SAMPLE_TILE_X	20

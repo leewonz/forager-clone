@@ -11,18 +11,20 @@ private:
 	TerrainType type;
 	POINT framePos;
 	bool isLand;
+	bool isFree;
 
 public:
 	virtual HRESULT Init(Stage* parentStage);
 	virtual void Release();
 	virtual void Update();
-	void Updatef();
 	virtual void Render(HDC hdc);
 
 	void SetTerrainType(TerrainType type);
 	TerrainType GetTerrainType();
 	void SetIsLand(bool isLand);
 	bool GetIsLand();
+	void SetIsFree(bool isLand);
+	bool GetIsFree();
 	void SetStage(Stage* parentStage);
 	Stage* GetStage();
 };

@@ -1,6 +1,5 @@
 #include "Enemy.h"
 #include "CommonFunction.h"
-#include "Tank.h"
 #include "Image.h"
 #include "MissileManager.h"
 

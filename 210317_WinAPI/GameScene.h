@@ -5,7 +5,7 @@
 
 class Stage;
 class Image;
-class BattleScene : public GameNode
+class GameScene : public GameNode
 {
 private:
 	Stage* stage;
@@ -16,6 +16,6 @@ public:
 	virtual void Update();
 	virtual void Render(HDC hdc);
 
-	virtual ~BattleScene() {};
+	virtual ~GameScene() {};
 };
 

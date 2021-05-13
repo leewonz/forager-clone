@@ -141,7 +141,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AstarScene.cpp" />
-    <ClCompile Include="BattleScene.cpp" />
+    <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="config.cpp" />
     <ClCompile Include="Enemy.cpp" />
@@ -158,7 +158,8 @@
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="Stage.cpp" />
     <ClCompile Include="StageObject.cpp" />
-    <ClCompile Include="Tank.cpp" />
+    <ClCompile Include="Structure.cpp" />
+    <ClCompile Include="StructureInfo.cpp" />
     <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="TerrainInfo.cpp" />
     <ClCompile Include="TilemapTool.cpp" />
@@ -167,7 +168,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AstarScene.h" />
-    <ClInclude Include="BattleScene.h" />
+    <ClInclude Include="GameScene.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="CommonFunction.h" />
     <ClInclude Include="config.h" />
@@ -185,7 +186,8 @@
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="Stage.h" />
     <ClInclude Include="StageObject.h" />
-    <ClInclude Include="Tank.h" />
+    <ClInclude Include="Structure.h" />
+    <ClInclude Include="StructureInfo.h" />
     <ClInclude Include="Terrain.h" />
     <ClInclude Include="TerrainInfo.h" />
     <ClInclude Include="TilemapTool.h" />

@@ -1,7 +1,7 @@
 #include "MainGame.h"
 #include "Image.h"
 #include "TilemapTool.h"
-#include "BattleScene.h"
+#include "GameScene.h"
 #include "AstarScene.h"
 
 HRESULT MainGame::Init()
@@ -23,11 +23,11 @@ HRESULT MainGame::Init()
 	backBuffer = new Image();
 	backBuffer->Init(maxWidth, maxHeight);
 
-	SceneManager::GetSingleton()->AddScene("전투_1", new BattleScene());
+	SceneManager::GetSingleton()->AddScene("전투_1", new GameScene());
 	SceneManager::GetSingleton()->AddScene("타일맵툴", new TilemapTool());
 	SceneManager::GetSingleton()->AddScene("A*", new AstarScene());	
 
-	SceneManager::GetSingleton()->ChangeScene("전투_1");
+	SceneManager::GetSingleton()->ChangeScene("타일맵툴");
 
 	isInited = true;
 

@@ -1,7 +1,7 @@
 #include "Stage.h"
-
-
 #include "TerrainInfo.h"
+#include "Structure.h"
+#include "StructureInfo.h"
 
 HRESULT Stage::Init(POINT tileSize)
 {
@@ -11,12 +11,13 @@ HRESULT Stage::Init(POINT tileSize)
         for (int x = 0; x < TILE_X; x++)
         {
             //Terrain* tempTerrain = new Terrain();
-            TerrainTiles[y][x].Init(this);
-            TerrainTiles[y][x].SetTerrainType(TerrainType::GRASS);
-            TerrainTiles[y][x].SetIsLand(true);
-            TerrainTiles[y][x].SetPos(
+            terrainTiles[y][x].Init(this);
+            terrainTiles[y][x].SetTerrainType(TerrainType::GRASS);
+            terrainTiles[y][x].SetIsLand(true);
+            terrainTiles[y][x].SetPos(
                 FPOINT{ (float)(tileSize.x * x), (float)(tileSize.y * y) });
-            
+
+            int a[con::AA];
         }
     }
     return S_OK;
@@ -24,6 +25,18 @@ HRESULT Stage::Init(POINT tileSize)
 
 void Stage::Release()
 {
+    for (int i = 0; i < structures.size(); i++)
+    {
+        SAFE_RELEASE(structures[i]);
+    }
+    for (int i = 0; i < structureInfos.size(); i++)
+    {
+        SAFE_DELETE(structureInfos[i]);
+    }
+    for (int i = 0; i < terrainInfos.size(); i++)
+    {
+        SAFE_DELETE(terrainInfos[i]);
+    }
 }
 
 void Stage::Update()
@@ -42,6 +55,8 @@ void Stage::Update()
             Save();
         }
     }
+
+    /*for(structure structures*/
 }
 
 void Stage::Render(HDC hdc)
@@ -50,8 +65,12 @@ void Stage::Render(HDC hdc)
     {
         for (int x = 0; x < TILE_X; x++)
         {
-            TerrainTiles[y][x].Render(hdc);
+            terrainTiles[y][x].Render(hdc);
         }
+    }
+    for (int i = 0; i < structures.size(); i++)
+    {
+        structures[i]->Render(hdc);
     }
 }
 
@@ -108,8 +127,8 @@ int* Stage::EncodeTerrain()
         for (int x = 0; x < TILE_X; x++)
         {
             int currCode = 0;
-            currCode += (int)TerrainTiles[y][x].GetTerrainType();
-            currCode += TerrainTiles[y][x].GetIsLand() ? (int)TerrainType::END : 0;
+            currCode += (int)terrainTiles[y][x].GetTerrainType();
+            currCode += terrainTiles[y][x].GetIsLand() ? (int)TerrainType::END : 0;
             this->code[y * TILE_X + x] = currCode;
         }
     }
@@ -123,12 +142,73 @@ void Stage::DecodeTerrain(int* code)
         for (int x = 0; x < TILE_X; x++)
         {
             int currCode = this->code[y * TILE_X + x];
-            TerrainTiles[y][x].SetTerrainType(
+            terrainTiles[y][x].SetTerrainType(
                 (TerrainType)(currCode % (int)TerrainType::END));
-            TerrainTiles[y][x].SetIsLand(
+            terrainTiles[y][x].SetIsLand(
                 (currCode / (int)TerrainType::END) == 1 ? true : false);
-            TerrainTiles[y][x].SetStage(this);
+            terrainTiles[y][x].SetIsFree(terrainTiles[y][x].GetIsLand());
+            terrainTiles[y][x].SetStage(this);
         }
+    }
+}
+
+bool Stage::CanBuild(RECT region)
+{
+    for (int y = region.top; y <= region.bottom; y++)
+    {
+        for (int x = region.left; x <= region.right; x++)
+        {
+            if (y < 0 || y >= TILE_Y || x < 0 || x >= TILE_X)
+            {
+                return false;
+            }
+
+            else if (terrainTiles[y][x].GetIsFree() == false)
+            {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+bool Stage::BuildStructure(POINT tilePos, int typeIdx)
+{
+    // 1. 건물 종류를 받아온다.
+    StructureInfo* tempInfo = GetStructureInfo(typeIdx);
+
+    // 2. 건물이 설치 가능한지 확인한다.
+    POINT tileSize = tempInfo->GetTileSize();
+    RECT tileRect = 
+        RECT{ tilePos.x, tilePos.y - tileSize.y + 1,
+        tilePos.x + tileSize.x - 1, tilePos.y };
+
+    if (!CanBuild(tileRect))
+    {
+        return false;
+    }
+    else
+    {
+        // 3. 건물을 만들고 세팅
+        Structure* tempStr = new Structure();
+        tempStr->Init(this);
+        tempStr->SetStructureType(0);
+        tempStr->SetPos(TileToPos(tilePos));
+        tempStr->SetSize(FPOINT{ (float)tileSize.x * TILESIZE, (float)tileSize.y * TILESIZE});
+        tempStr->SetOffset(FPOINT{ 0.0f, (float) (tileSize.y - 1) * TILESIZE});
+        
+        // 4. 만들어진 건물이 있는 Terrain 타일을 막혀있다고 세팅힌다.
+        for (int y = tileRect.top; y <= tileRect.bottom; y++)
+        {
+            for (int x = tileRect.left; x <= tileRect.right; x++)
+            {
+                terrainTiles[y][x].SetIsFree(false);
+            }
+        }
+
+        // 5. 건물을 벡터에 넣기
+        structures.push_back(tempStr);
+        return true;
     }
 }
 
@@ -155,17 +235,26 @@ void Stage::InitInfo()
             tempTerrainInfo->Init(i, "tile_fire");
             break;
         }
-        TerrainInfos.push_back(tempTerrainInfo);
+        terrainInfos.push_back(tempTerrainInfo);
     }
+    StructureInfo* tempStructureInfo = new StructureInfo();
+    tempStructureInfo->Init(0, "sampleBuilding", "sampleBuilding");
+    tempStructureInfo->SetTileSize(POINT{2, 2});
+    structureInfos.push_back(tempStructureInfo);
 }
 
 TerrainInfo* Stage::GetTerrainInfo(TerrainType i)
 {
-    return TerrainInfos[(int)i];
+    return terrainInfos[(int)i];
+}
+
+StructureInfo* Stage::GetStructureInfo(int i)
+{
+    return structureInfos[i];
 }
 
 void Stage::ChangeTerrain(POINT posIdx, TerrainType type, bool isLand)
 {
-    TerrainTiles[posIdx.y][posIdx.x].SetIsLand(isLand);
-    TerrainTiles[posIdx.y][posIdx.x].SetTerrainType(type);
+    terrainTiles[posIdx.y][posIdx.x].SetIsLand(isLand);
+    terrainTiles[posIdx.y][posIdx.x].SetTerrainType(type);
 }

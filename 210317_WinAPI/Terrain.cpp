@@ -17,10 +17,6 @@ void Terrain::Update()
 {
 }
 
-void Terrain::Updatef()
-{
-}
-
 void Terrain::Render(HDC hdc)
 {
 	if (isLand)
@@ -51,6 +47,16 @@ void Terrain::SetIsLand(bool isLand)
 }
 
 bool Terrain::GetIsLand()
+{
+	return isLand;
+}
+
+void Terrain::SetIsFree(bool isLand)
+{
+	this->isLand = isLand;
+}
+
+bool Terrain::GetIsFree()
 {
 	return isLand;
 }
