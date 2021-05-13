@@ -5,11 +5,12 @@
 
 class Stage;
 class Image;
+class Player;
 class GameScene : public GameNode
 {
 private:
 	Stage* stage;
-
+	Player* player;
 public:
 	virtual HRESULT Init();
 	virtual void Release();

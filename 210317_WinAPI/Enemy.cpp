@@ -97,19 +97,19 @@ void Enemy::Render(HDC hdc)
 
 void Enemy::Move()
 {
-    if (target)
-    {
-        FPOINT targetPos = target->GetPos();
+    //if (target)
+    //{
+    //    FPOINT targetPos = target->GetPos();
 
-        // 현재 위치에서 타겟 위치로 이동할 수 있는 각도 구하기
-        float x = targetPos.x - pos.x;
-        float y = targetPos.y - pos.y;
+    //    // 현재 위치에서 타겟 위치로 이동할 수 있는 각도 구하기
+    //    float x = targetPos.x - pos.x;
+    //    float y = targetPos.y - pos.y;
 
-        angle = atan2(y, x);
+    //    angle = atan2(y, x);
 
-        pos.x += cosf(angle) * moveSpeed;
-        pos.y += sinf(angle) * moveSpeed;
-    }
+    //    pos.x += cosf(angle) * moveSpeed;
+    //    pos.y += sinf(angle) * moveSpeed;
+    //}
 }
 
 void Enemy::HorizonMove()

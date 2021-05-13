@@ -40,6 +40,9 @@
     <Filter Include="2D Framework\UI\Button">
       <UniqueIdentifier>{91eb96ad-df64-4b6d-bc8b-8a504d0d37bb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="MainGame\Stage">
+      <UniqueIdentifier>{a389ecf3-8dbd-40e0-9b2b-6a0002c15f4f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -90,19 +93,7 @@
     <ClCompile Include="AstarScene.cpp">
       <Filter>MainGame\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Stage.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Terrain.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="TerrainInfo.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="StageObject.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="GameData.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="config.cpp">
@@ -111,10 +102,22 @@
     <ClCompile Include="GameScene.cpp">
       <Filter>MainGame\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="Stage.cpp">
+      <Filter>MainGame\Stage</Filter>
+    </ClCompile>
     <ClCompile Include="Structure.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>MainGame\Stage</Filter>
     </ClCompile>
     <ClCompile Include="StructureInfo.cpp">
+      <Filter>MainGame\Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="TerrainInfo.cpp">
+      <Filter>MainGame\Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="Terrain.cpp">
+      <Filter>MainGame\Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
@@ -173,28 +176,28 @@
     <ClInclude Include="AstarScene.h">
       <Filter>MainGame\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Stage.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Terrain.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="TerrainInfo.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="StageObject.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="GameData.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="GameScene.h">
       <Filter>MainGame\Scene</Filter>
     </ClInclude>
+    <ClInclude Include="Stage.h">
+      <Filter>MainGame\Stage</Filter>
+    </ClInclude>
     <ClInclude Include="Structure.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>MainGame\Stage</Filter>
     </ClInclude>
     <ClInclude Include="StructureInfo.h">
+      <Filter>MainGame\Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="Terrain.h">
+      <Filter>MainGame\Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="TerrainInfo.h">
+      <Filter>MainGame\Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

@@ -17,7 +17,6 @@ HRESULT Stage::Init(POINT tileSize)
             terrainTiles[y][x].SetPos(
                 FPOINT{ (float)(tileSize.x * x), (float)(tileSize.y * y) });
 
-            int a[con::AA];
         }
     }
     return S_OK;

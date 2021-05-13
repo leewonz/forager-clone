@@ -30,6 +30,10 @@ HRESULT ImageManager::Init()
     ImageManager::GetSingleton()->AddImage("sampleBuilding",
         "Image/sampleBuilding.bmp", 30, 42, 
         false, RGB(255, 0, 255));
+
+    ImageManager::GetSingleton()->AddImage("char_theForager",
+        "Image/char_theForager.bmp", 48, 32, 4, 2,
+        false, RGB(255, 0, 255));
     
 
     return S_OK;
