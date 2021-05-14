@@ -20,16 +20,8 @@ void Terrain::Update()
 void Terrain::Render(HDC hdc)
 {
 	RECT box = GetBox();
-	if (isLand)
-	{
-		parentStage->GetTerrainInfo(type)->GetImg()->
-			FrameRender(hdc, box.left, box.top, 0, 0, false);
-	}
-	else
-	{
-		parentStage->GetTerrainInfo(type)->GetImg()->
-			FrameRender(hdc, box.left, box.top, 3, 0, false);
-	}
+	parentStage->GetTerrainInfo(type)->GetImg()->
+		FrameRender(hdc, box.left, box.top, framePos.x, framePos.y, false);
 }
 
 void Terrain::SetTerrainType(TerrainType type)
@@ -80,4 +72,28 @@ void Terrain::SetStructure(Structure* structure)
 Structure* Terrain::GetStructure()
 {
 	return structure;
+}
+
+void Terrain::RefreshTileShape()
+{
+	int code = 0;
+	int currCode = 1;
+	for (int i = 0; i < 4; i++)
+	{
+		POINT myPos = parentStage->PosToTile(pos);
+
+		myPos.x += dirPoints[i].x;
+		myPos.y += dirPoints[i].y;
+
+		if (parentStage->IsInStage(myPos))
+		{
+			Terrain* adjTerrain = GetStage()->GetTerrain(myPos);
+			if (adjTerrain->GetIsLand())
+			{
+				code += currCode;
+			}
+		}
+		currCode *= 2;
+	}
+	framePos = parentStage->GetAdjTileShape(code, this->GetIsLand());
 }

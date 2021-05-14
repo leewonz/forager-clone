@@ -23,6 +23,9 @@ HRESULT Stage::Init(POINT tileSize)
                 FPOINT{ (float)tileSize.x , (float)tileSize.y });
         }
     }
+
+    RefreshTileShapeAll();
+
     return S_OK;
 }
 
@@ -153,6 +156,8 @@ void Stage::DecodeTerrain(int* code)
             terrainTiles[y][x].SetStage(this);
         }
     }
+
+    RefreshTileShapeAll();
 }
 
 bool Stage::CanBuild(RECT region)
@@ -230,6 +235,17 @@ bool Stage::BuildStructure(POINT tilePos, int typeIdx)
     }
 }
 
+void Stage::RefreshTileShapeAll()
+{
+    for (int y = 0; y < Con::TILE_Y; y++)
+    {
+        for (int x = 0; x < Con::TILE_X; x++)
+        {
+            terrainTiles[y][x].RefreshTileShape();
+        }
+    }
+}
+
 void Stage::InitInfo()
 {
     for (int i = 0; i < (int)TerrainType::END; i++)
@@ -259,6 +275,25 @@ void Stage::InitInfo()
     tempStructureInfo->Init(0, "sampleBuilding", "sampleBuilding");
     tempStructureInfo->SetTileSize(POINT{ 2, 2 });
     structureInfos.push_back(tempStructureInfo);
+
+    adjTileShape[0] = { 0,0 };
+    adjTileShape[AdjDirs::R] = { 0,3 };
+    adjTileShape[AdjDirs::D] = { 1,3 };
+    adjTileShape[AdjDirs::L] = { 2,3 };
+    adjTileShape[AdjDirs::U] = { 3,3 };
+    adjTileShape[AdjDirs::R + AdjDirs::U] = { 3,2 };
+    adjTileShape[AdjDirs::D + AdjDirs::R] = { 2,2 };
+    adjTileShape[AdjDirs::L + AdjDirs::D] = { 1,2 };
+    adjTileShape[AdjDirs::L + AdjDirs::U] = { 0,2 };
+    adjTileShape[AdjDirs::L + AdjDirs::R] = { 4,2 };
+    adjTileShape[AdjDirs::D + AdjDirs::U] = { 4,3 };
+    adjTileShape[AdjDirs::D + AdjDirs::L + AdjDirs::U] = { 0,1 };
+    adjTileShape[AdjDirs::L + AdjDirs::R + AdjDirs::U] = { 1,1 };
+    adjTileShape[AdjDirs::R + AdjDirs::D + AdjDirs::U] = { 2,1 };
+    adjTileShape[AdjDirs::L + AdjDirs::D + AdjDirs::R] = { 3,1 };
+    adjTileShape[AdjDirs::L + AdjDirs::D + AdjDirs::R + AdjDirs::U] = { 1,0 };
+    adjTileShapeWater[0] = { 3,0 };
+    adjTileShapeWater[1] = { 2,0 };
 }
 
 Terrain* Stage::GetTerrain(POINT TilePos)
@@ -280,4 +315,11 @@ void Stage::ChangeTerrain(POINT posIdx, TerrainType type, bool isLand)
 {
     terrainTiles[posIdx.y][posIdx.x].SetIsLand(isLand);
     terrainTiles[posIdx.y][posIdx.x].SetTerrainType(type);
+    for (int y = posIdx.y - 1; y <= posIdx.y + 1; y++)
+    {
+        for (int x = posIdx.x - 1; x <= posIdx.x + 1; x++)
+        {
+            terrainTiles[y][x].RefreshTileShape();
+        }
+    }
 }

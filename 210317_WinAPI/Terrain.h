@@ -2,6 +2,9 @@
 #include "GameNode.h"
 #include "StageObject.h"
 #include "TerrainInfo.h"
+#include <bitset>
+
+const POINT dirPoints[4] = { {1, 0}, {0, 1}, {-1, 0}, {0, -1} };
 
 class Structure;
 class Stage;
@@ -31,5 +34,6 @@ public:
 	Stage* GetStage();
 	void SetStructure(Structure* structure);
 	Structure* GetStructure();
+	void RefreshTileShape();
 };
 
