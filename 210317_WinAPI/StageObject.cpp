@@ -40,14 +40,14 @@ StageObject::StageObject()
 RECT StageObject::GetBox()
 {
     return RECT{
-        (LONG)(pos.x - offset.x),
-        (LONG)(pos.y - offset.y),
-        (LONG)(pos.x + size.x - offset.x),
-        (LONG)(pos.y + size.y - offset.y) };
+        (LONG)(pos.x + offset.x),
+        (LONG)(pos.y + offset.y),
+        (LONG)(pos.x + size.x + offset.x),
+        (LONG)(pos.y + size.y + offset.y) };
 }
 
 void StageObject::CenterOffset()
 {
-    offset.x = size.x * 0.5;
-    offset.y = size.y * 0.5;
+    offset.x = -size.x * 0.5;
+    offset.y = -size.y * 0.5;
 }

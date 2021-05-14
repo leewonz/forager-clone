@@ -20,17 +20,19 @@ using namespace std;
 
 namespace Con
 {
-	
+	const int TILE_X = 20;
+	const int TILE_Y = 20;
+	const int TILESIZE = 20;
 }
 // 샘플 타일 정보
 // 640 * 288
 #define SAMPLE_TILE_X	20
 #define SAMPLE_TILE_Y	9
-#define TILESIZE		20
+//#define TILESIZE		20
 
 // 메인 그리기 공간 정보
-#define	TILE_X			20
-#define	TILE_Y			20
+//#define	TILE_X			20
+//#define	TILE_Y			20
 
 #define WINSIZE_X	1080
 #define WINSIZE_Y	720

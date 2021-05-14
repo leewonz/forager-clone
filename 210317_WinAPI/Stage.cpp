@@ -6,17 +6,21 @@
 HRESULT Stage::Init(POINT tileSize)
 {
     InitInfo();
-    for (int y = 0; y < TILE_Y; y++)
+    for (int y = 0; y < Con::TILE_Y; y++)
     {
-        for (int x = 0; x < TILE_X; x++)
+        for (int x = 0; x < Con::TILE_X; x++)
         {
             //Terrain* tempTerrain = new Terrain();
             terrainTiles[y][x].Init(this);
             terrainTiles[y][x].SetTerrainType(TerrainType::GRASS);
             terrainTiles[y][x].SetIsLand(true);
             terrainTiles[y][x].SetPos(
-                FPOINT{ (float)(tileSize.x * x), (float)(tileSize.y * y) });
-
+                FPOINT{ (float)(tileSize.x * x) + tileSize.x * 0.5f,
+                        (float)(tileSize.y * y) + tileSize.y * 0.5f });
+            terrainTiles[y][x].SetOffset(
+                FPOINT{ -tileSize.x * 0.5f , -tileSize.y * 0.5f });
+            terrainTiles[y][x].SetSize(
+                FPOINT{ (float)tileSize.x , (float)tileSize.y });
         }
     }
     return S_OK;
@@ -60,9 +64,9 @@ void Stage::Update()
 
 void Stage::Render(HDC hdc)
 {
-    for (int y = 0; y < TILE_Y; y++)
+    for (int y = 0; y < Con::TILE_Y; y++)
     {
-        for (int x = 0; x < TILE_X; x++)
+        for (int x = 0; x < Con::TILE_X; x++)
         {
             terrainTiles[y][x].Render(hdc);
         }
@@ -84,7 +88,7 @@ void Stage::Save()
         0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
     /*void**/
     EncodeTerrain();
-    WriteFile(hFile, this->code, sizeof(int) * TILE_X * TILE_Y,
+    WriteFile(hFile, this->code, sizeof(int) * Con::TILE_X * Con::TILE_Y,
         &writtenBytes, NULL);
 
     CloseHandle(hFile);
@@ -101,7 +105,7 @@ void Stage::Load()
         0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
     /*void**/
 
-    if (ReadFile(hFile, this->code, sizeof(int) * TILE_X * TILE_Y,
+    if (ReadFile(hFile, this->code, sizeof(int) * Con::TILE_X * Con::TILE_Y,
         &readBytes, NULL))
     {
         DecodeTerrain(this->code);
@@ -119,16 +123,16 @@ void Stage::Load()
 int* Stage::EncodeTerrain()
 {
     int* code;
-    code = new int[TILE_Y * TILE_X];
+    code = new int[Con::TILE_Y * Con::TILE_X];
 
-    for (int y = 0; y < TILE_Y; y++)
+    for (int y = 0; y < Con::TILE_Y; y++)
     {
-        for (int x = 0; x < TILE_X; x++)
+        for (int x = 0; x < Con::TILE_X; x++)
         {
             int currCode = 0;
             currCode += (int)terrainTiles[y][x].GetTerrainType();
             currCode += terrainTiles[y][x].GetIsLand() ? (int)TerrainType::END : 0;
-            this->code[y * TILE_X + x] = currCode;
+            this->code[y * Con::TILE_X + x] = currCode;
         }
     }
     return code;
@@ -136,11 +140,11 @@ int* Stage::EncodeTerrain()
 
 void Stage::DecodeTerrain(int* code)
 {
-    for (int y = 0; y < TILE_Y; y++)
+    for (int y = 0; y < Con::TILE_Y; y++)
     {
-        for (int x = 0; x < TILE_X; x++)
+        for (int x = 0; x < Con::TILE_X; x++)
         {
-            int currCode = this->code[y * TILE_X + x];
+            int currCode = this->code[y * Con::TILE_X + x];
             terrainTiles[y][x].SetTerrainType(
                 (TerrainType)(currCode % (int)TerrainType::END));
             terrainTiles[y][x].SetIsLand(
@@ -157,7 +161,7 @@ bool Stage::CanBuild(RECT region)
     {
         for (int x = region.left; x <= region.right; x++)
         {
-            if (y < 0 || y >= TILE_Y || x < 0 || x >= TILE_X)
+            if (y < 0 || y >= Con::TILE_Y || x < 0 || x >= Con::TILE_X)
             {
                 return false;
             }
@@ -178,10 +182,10 @@ bool Stage::BuildStructure(POINT tilePos, int typeIdx)
 
     // 2. 건물이 설치 가능한지 확인한다.
     POINT tileSize = tempInfo->GetTileSize();
-    RECT tileRect = 
+    RECT tileRect =
         RECT{ tilePos.x, tilePos.y - tileSize.y + 1,
         tilePos.x + tileSize.x - 1, tilePos.y };
-
+    POINT selectedTile = { tilePos.x , tilePos.y };
     if (!CanBuild(tileRect))
     {
         return false;
@@ -191,11 +195,25 @@ bool Stage::BuildStructure(POINT tilePos, int typeIdx)
         // 3. 건물을 만들고 세팅
         Structure* tempStr = new Structure();
         tempStr->Init(this);
-        tempStr->SetStructureType(0);
-        tempStr->SetPos(TileToPos(tilePos));
-        tempStr->SetSize(FPOINT{ (float)tileSize.x * TILESIZE, (float)tileSize.y * TILESIZE});
-        tempStr->SetOffset(FPOINT{ 0.0f, (float) (tileSize.y - 1) * TILESIZE});
-        
+        tempStr->SetStructureType(typeIdx);
+
+        FPOINT anchor = TileToPos(tilePos);
+        anchor.y += Con::TILESIZE;
+        FPOINT size = FPOINT{
+            (float)tileSize.x * Con::TILESIZE,
+            (float)tileSize.y * Con::TILESIZE
+        };
+        FPOINT pos = anchor;
+        pos.x += size.x * 0.5f;
+        pos.y -= size.y * 0.5f;
+        FPOINT offset = FPOINT{
+            -size.x * 0.5f,
+            -size.y * 0.5f
+        };
+        tempStr->SetPos(pos);
+        tempStr->SetSize(size);
+        tempStr->SetOffset(offset);
+
         // 4. 만들어진 건물이 있는 Terrain 타일을 막혀있다고 세팅힌다.
         for (int y = tileRect.top; y <= tileRect.bottom; y++)
         {
@@ -207,6 +225,7 @@ bool Stage::BuildStructure(POINT tilePos, int typeIdx)
 
         // 5. 건물을 벡터에 넣기
         structures.push_back(tempStr);
+        GetTerrain(selectedTile)->SetStructure(tempStr);
         return true;
     }
 }
@@ -238,8 +257,13 @@ void Stage::InitInfo()
     }
     StructureInfo* tempStructureInfo = new StructureInfo();
     tempStructureInfo->Init(0, "sampleBuilding", "sampleBuilding");
-    tempStructureInfo->SetTileSize(POINT{2, 2});
+    tempStructureInfo->SetTileSize(POINT{ 2, 2 });
     structureInfos.push_back(tempStructureInfo);
+}
+
+Terrain* Stage::GetTerrain(POINT TilePos)
+{
+    return &terrainTiles[TilePos.y][TilePos.x];
 }
 
 TerrainInfo* Stage::GetTerrainInfo(TerrainType i)

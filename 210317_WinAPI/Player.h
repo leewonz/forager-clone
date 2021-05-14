@@ -11,6 +11,7 @@ private:
 	Image* img;
 	int frameX;
 	int frameY;
+	float frameTime;
 public:
 	virtual HRESULT Init();		
 	virtual void Release();		

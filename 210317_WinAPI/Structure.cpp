@@ -21,7 +21,8 @@ void Structure::Render(HDC hdc)
 {
 	RECT box = GetBox();
 	Rectangle(hdc, box.left, box.top, box.right, box.bottom);
-	GetStage()->GetStructureInfo(type)->GetImg()->Render(hdc, pos.x, pos.y, false);
+	GetStage()->GetStructureInfo(type)->GetImg()->
+		Render(hdc, box.left, box.top, false);
 }
 
 void Structure::SetStage(Stage* parentStage)

@@ -14,7 +14,7 @@ HRESULT TilemapTool::Init()
 
     // 메인 공간 렉트 설정
     stage = new Stage();
-    stage->Init(POINT{ TILESIZE, TILESIZE });
+    stage->Init(POINT{ Con::TILESIZE, Con::TILESIZE });
 
     // 샘플 공간 렉트 설정
     for (int i = 0; i < SAMPLE_TILE_Y; i++)
@@ -22,21 +22,21 @@ HRESULT TilemapTool::Init()
         for (int j = 0; j < SAMPLE_TILE_X; j++)
         {
             SetRect(&sampleTileInfo[i * SAMPLE_TILE_X + j].rcTile,
-                TILEMAPTOOLSIZE_X - sampleTile->GetWidth() + (TILESIZE * j),
-                (TILESIZE * i),
-                TILEMAPTOOLSIZE_X - sampleTile->GetWidth() + (TILESIZE * j) + TILESIZE,
-                (TILESIZE * i) + TILESIZE);
+                TILEMAPTOOLSIZE_X - sampleTile->GetWidth() + (Con::TILESIZE * j),
+                (Con::TILESIZE * i),
+                TILEMAPTOOLSIZE_X - sampleTile->GetWidth() + (Con::TILESIZE * j) + Con::TILESIZE,
+                (Con::TILESIZE * i) + Con::TILESIZE);
 
             sampleTileInfo[i * SAMPLE_TILE_X + j].frameX = j;
             sampleTileInfo[i * SAMPLE_TILE_X + j].frameY = i;
 
             //sampleTileInfo[i * SAMPLE_TILE_X + j].rcTile.left =
-            //    TILEMAPTOOLSIZE_X - sampleTile->GetWidth() + (TILESIZE * j);
-            //sampleTileInfo[i * SAMPLE_TILE_X + j].rcTile.top = (TILESIZE * i);
+            //    TILEMAPTOOLSIZE_X - sampleTile->GetWidth() + (Con::TILESIZE * j);
+            //sampleTileInfo[i * SAMPLE_TILE_X + j].rcTile.top = (Con::TILESIZE * i);
             //sampleTileInfo[i * SAMPLE_TILE_X + j].rcTile.right =
-            //    sampleTileInfo[i * SAMPLE_TILE_X + j].rcTile.left + TILESIZE;
+            //    sampleTileInfo[i * SAMPLE_TILE_X + j].rcTile.left + Con::TILESIZE;
             //sampleTileInfo[i * SAMPLE_TILE_X + j].rcTile.bottom =
-            //    sampleTileInfo[i * SAMPLE_TILE_X + j].rcTile.top + TILESIZE;
+            //    sampleTileInfo[i * SAMPLE_TILE_X + j].rcTile.top + Con::TILESIZE;
         }
     }
 
@@ -80,8 +80,8 @@ void TilemapTool::Update()
     // 메인 영역 계산
     rcMain.left = 0;
     rcMain.top = 0;
-    rcMain.right = rcMain.left + (TILESIZE * TILE_X);
-    rcMain.bottom = rcMain.top + (TILESIZE * TILE_Y);
+    rcMain.right = rcMain.left + (Con::TILESIZE * Con::TILE_X);
+    rcMain.bottom = rcMain.top + (Con::TILESIZE * Con::TILE_Y);
 
     // 샘플 영역 계산
     rcSample.left = TILEMAPTOOLSIZE_X - sampleTile->GetWidth();
@@ -98,7 +98,7 @@ void TilemapTool::Update()
             || KeyManager::GetSingleton()->IsStayKeyDown(VK_LBUTTON))
         {
             POINT selMainTileIdx =
-                POINT{ g_ptMouse.x / TILESIZE, g_ptMouse.y / TILESIZE };
+                POINT{ g_ptMouse.x / Con::TILESIZE, g_ptMouse.y / Con::TILESIZE };
 
             stage->ChangeTerrain(
                 selMainTileIdx,
@@ -114,8 +114,8 @@ void TilemapTool::Update()
             // 2) 마우스 좌표로 인덱스 계산
             int posX = g_ptMouse.x - rcSample.left;
             int posY = g_ptMouse.y - rcSample.top;
-            ptStartSelectedFrame.x = posX / TILESIZE;
-            ptStartSelectedFrame.y = posY / TILESIZE;
+            ptStartSelectedFrame.x = posX / Con::TILESIZE;
+            ptStartSelectedFrame.y = posY / Con::TILESIZE;
 
             ptSelected[0] = g_ptMouse;
 
@@ -135,8 +135,8 @@ void TilemapTool::Update()
         {
             int posX = g_ptMouse.x - rcSample.left;
             int posY = g_ptMouse.y - rcSample.top;
-            ptEndSelectedFrame.x = posX / TILESIZE;
-            ptEndSelectedFrame.y = posY / TILESIZE;
+            ptEndSelectedFrame.x = posX / Con::TILESIZE;
+            ptEndSelectedFrame.y = posY / Con::TILESIZE;
 
             // 선택영역 초기화
             ptSelected[0].x = -1;
@@ -190,9 +190,9 @@ void TilemapTool::Render(HDC hdc)
     if (ptStartSelectedFrame.x == ptEndSelectedFrame.x &&
         ptStartSelectedFrame.y == ptEndSelectedFrame.y)
     {
-        sampleTile->FrameRender(hdc, 
+        sampleTile->FrameRender(hdc,
             TILEMAPTOOLSIZE_X - sampleTile->GetWidth(),
-            sampleTile->GetHeight() + 50, 
+            sampleTile->GetHeight() + 50,
             ptStartSelectedFrame.x, ptStartSelectedFrame.y, false, 3);
     }
     else
@@ -202,8 +202,8 @@ void TilemapTool::Render(HDC hdc)
             for (int j = 0; j <= ptEndSelectedFrame.x - ptStartSelectedFrame.x; j++)
             {
                 sampleTile->FrameRender(hdc,
-                    TILEMAPTOOLSIZE_X - sampleTile->GetWidth() + (j * TILESIZE),
-                    sampleTile->GetHeight() + 50 + (i * TILESIZE),
+                    TILEMAPTOOLSIZE_X - sampleTile->GetWidth() + (j * Con::TILESIZE),
+                    sampleTile->GetHeight() + 50 + (i * Con::TILESIZE),
                     ptStartSelectedFrame.x + j, ptStartSelectedFrame.y + i, false, 1);
 
             }

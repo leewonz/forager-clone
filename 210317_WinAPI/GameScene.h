@@ -4,6 +4,7 @@
 // 기존 MainGame 클래스의 내용을 이동
 
 class Stage;
+class StageObject;
 class Image;
 class Player;
 class GameScene : public GameNode
@@ -16,6 +17,9 @@ public:
 	virtual void Release();
 	virtual void Update();
 	virtual void Render(HDC hdc);
+
+	void CheckCollision();
+	void CollisionPush(StageObject* movable, StageObject* immovable);
 
 	virtual ~GameScene() {};
 };

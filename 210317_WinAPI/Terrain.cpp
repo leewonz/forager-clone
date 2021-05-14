@@ -19,15 +19,16 @@ void Terrain::Update()
 
 void Terrain::Render(HDC hdc)
 {
+	RECT box = GetBox();
 	if (isLand)
 	{
 		parentStage->GetTerrainInfo(type)->GetImg()->
-			FrameRender(hdc, pos.x, pos.y, 0, 0, false);
+			FrameRender(hdc, box.left, box.top, 0, 0, false);
 	}
 	else
 	{
 		parentStage->GetTerrainInfo(type)->GetImg()->
-			FrameRender(hdc, pos.x, pos.y, 3, 0, false);
+			FrameRender(hdc, box.left, box.top, 3, 0, false);
 	}
 }
 
@@ -51,14 +52,14 @@ bool Terrain::GetIsLand()
 	return isLand;
 }
 
-void Terrain::SetIsFree(bool isLand)
+void Terrain::SetIsFree(bool isFree)
 {
-	this->isLand = isLand;
+	this->isFree = isFree;
 }
 
 bool Terrain::GetIsFree()
 {
-	return isLand;
+	return isFree;
 }
 
 void Terrain::SetStage(Stage* parentStage)
@@ -69,4 +70,14 @@ void Terrain::SetStage(Stage* parentStage)
 Stage* Terrain::GetStage()
 {
 	return parentStage;
+}
+
+void Terrain::SetStructure(Structure* structure)
+{
+	this->structure = structure;
+}
+
+Structure* Terrain::GetStructure()
+{
+	return structure;
 }
