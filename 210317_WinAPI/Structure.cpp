@@ -20,9 +20,10 @@ void Structure::Update()
 void Structure::Render(HDC hdc)
 {
 	RECT box = GetBox();
-	Rectangle(hdc, box.left, box.top, box.right, box.bottom);
+	Image::StageRectangle(hdc, box);
 	GetStage()->GetStructureInfo(type)->GetImg()->
-		Render(hdc, box.left, box.top, false);
+		StageRender(hdc, box.left, box.top, 0, 0, false, 1);
+	
 }
 
 void Structure::SetStage(Stage* parentStage)

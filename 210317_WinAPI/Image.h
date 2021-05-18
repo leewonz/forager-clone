@@ -82,10 +82,11 @@ public:
 	void Render(HDC hdc, int destX = 0, int destY = 0,
 		bool isCenterRenderring = false);
 	void FrameRender(HDC hdc, int destX, int destY,
-		int currFrameX, int currFrameY, bool isCenterRenderring = false, int size = 1);
+		int currFrameX, int currFrameY, bool isCenterRenderring = false, float size = 1);
 	void AlphaRender(HDC hdc, int destX, int destY,
 		bool isCenterRenderring = false);
-
+	void StageRender(HDC hdc, int destX, int destY,
+		int currFrameX, int currFrameY, bool isCenterRenderring = false, float size = 1);
 
 	void Release();
 
@@ -105,5 +106,8 @@ public:
 	int GetFrameHeight() { return this->imageInfo->frameHeight; }
 
 	IMAGE_INFO* const  GetImageInfo() { return this->imageInfo; }
+
+	static void StageRectangle(HDC hdc, RECT rect);
+
 };
 

@@ -166,7 +166,7 @@ bool Stage::CanBuild(RECT region)
     {
         for (int x = region.left; x <= region.right; x++)
         {
-            if (y < 0 || y >= Con::TILE_Y || x < 0 || x >= Con::TILE_X)
+            if (!IsInStage(POINT{x, y}))
             {
                 return false;
             }
@@ -319,7 +319,10 @@ void Stage::ChangeTerrain(POINT posIdx, TerrainType type, bool isLand)
     {
         for (int x = posIdx.x - 1; x <= posIdx.x + 1; x++)
         {
-            terrainTiles[y][x].RefreshTileShape();
+            if (IsInStage(POINT{x, y}))
+            {
+                terrainTiles[y][x].RefreshTileShape();
+            }
         }
     }
 }

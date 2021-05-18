@@ -89,6 +89,16 @@ inline RECT GetRectToCenter(int posX, int posY, int width, int height)
 	return rc;
 }
 
+inline POINT toPoint(FPOINT fpoint)
+{
+	return POINT{ (LONG)fpoint.x , (LONG)fpoint.y };
+}
+
+inline FPOINT toFpoint(POINT point)
+{
+	return FPOINT{ (float)point.x , (float)point.y };
+}
+
 inline void SetClientRect(HWND hWnd, int width, int height)
 {
 	RECT crt;

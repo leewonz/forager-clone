@@ -3,6 +3,7 @@
 #include "TilemapTool.h"
 #include "GameScene.h"
 #include "AstarScene.h"
+#include "Camera.h"
 
 HRESULT MainGame::Init()
 {
@@ -10,6 +11,7 @@ HRESULT MainGame::Init()
 
 	KeyManager::GetSingleton()->Init();
 	ImageManager::GetSingleton()->Init();
+	Camera::GetSingleton()->Init();
 	SceneManager::GetSingleton()->Init();
 
 	// ¸ÞÀÎ°ÔÀÓÀÇ ÃÊ±âÈ­ ÇÔ¼ö
@@ -57,10 +59,10 @@ void MainGame::Render()
 	SceneManager::GetSingleton()->Render(hBackDC);
 
 	// ÀÎ»ç
-	TextOut(hBackDC, 20, 20, "MainGame ·»´õ Áß", strlen("MainGame ·»´õ Áß"));
+	//TextOut(hBackDC, 20, 20, "MainGame ·»´õ Áß", strlen("MainGame ·»´õ Áß"));
 	// ¸¶¿ì½º ÁÂÇ¥
 	wsprintf(szText, "X : %d, Y : %d", g_ptMouse.x, g_ptMouse.y);
-	TextOut(hBackDC, 200, 20, szText, strlen(szText));
+	//TextOut(hBackDC, 20, 20, szText, strlen(szText));
 	// FPS
 	TimerManager::GetSingleton()->Render(hBackDC);
 

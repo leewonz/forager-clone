@@ -1,4 +1,5 @@
 #include "Image.h"
+#include "Camera.h"
 
 HRESULT Image::Init(int width, int height)
 {
@@ -50,6 +51,13 @@ HRESULT Image::Init(const char* fileName, int width, int height,
         imageInfo->width, imageInfo->height);
     imageInfo->hOldBlendBit = (HBITMAP)SelectObject(imageInfo->hBlendDC, 
         imageInfo->hBlendBit);
+
+    imageInfo->maxFrameX = 1;
+    imageInfo->maxFrameY = 1;
+    imageInfo->frameWidth = width;
+    imageInfo->frameHeight = height;
+    imageInfo->currFrameX = 0;
+    imageInfo->currFrameY = 0;
 
     ReleaseDC(g_hWnd, hdc);
 
@@ -147,8 +155,10 @@ void Image::Render(HDC hdc, int destX, int destY, bool isCenterRenderring)
   
 }
 
+
+
 void Image::FrameRender(HDC hdc, int destX, int destY,
-    int currFrameX, int currFrameY, bool isCenterRenderring, int size)
+    int currFrameX, int currFrameY, bool isCenterRenderring, float size)
 {
     imageInfo->currFrameX = currFrameX;
     imageInfo->currFrameY = currFrameY;
@@ -157,8 +167,8 @@ void Image::FrameRender(HDC hdc, int destX, int destY,
     int y = destY;
     if (isCenterRenderring)
     {
-        x = destX - (imageInfo->frameWidth / 2);
-        y = destY - (imageInfo->frameHeight / 2);
+        x = destX - (imageInfo->frameWidth * size / 2);
+        y = destY - (imageInfo->frameHeight * size / 2);
     }
 
     if (isTransparent)
@@ -232,6 +242,14 @@ void Image::AlphaRender(HDC hdc, int destX, int destY, bool isCenterRenderring)
         imageInfo->hBlendDC, 0, 0, imageInfo->width, imageInfo->height, blendFunc);
 }
 
+void Image::StageRender(HDC hdc, int destX, int destY, int currFrameX, int currFrameY, bool isCenterRenderring, float size)
+{
+    Camera* cam = Camera::GetSingleton();
+    FPOINT camPos = cam->WorldToCamera(FPOINT{ (float)destX, (float)destY });
+    float camSize = cam->GetScale();
+    FrameRender(hdc, camPos.x, camPos.y, currFrameX, currFrameY, isCenterRenderring, size * camSize);
+}
+
 void Image::Release()
 {
     if (imageInfo)
@@ -250,4 +268,10 @@ void Image::Release()
         delete imageInfo;
         imageInfo = nullptr;
     }
+}
+
+void Image::StageRectangle(HDC hdc, RECT rect)
+{
+    RECT worldRect = Camera::GetSingleton()->WorldToCamera(rect);
+    Rectangle(hdc, worldRect.left, worldRect.top, worldRect.right, worldRect.bottom);
 }

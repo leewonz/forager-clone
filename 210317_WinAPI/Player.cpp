@@ -1,11 +1,14 @@
 #include "Player.h"
 #include "Image.h"
 #include "ImageManager.h"
+#include "Camera.h"
 
 HRESULT Player::Init()
 {
     img = ImageManager::GetSingleton()->FindImage("char_theForager");
-
+    SetPos(FPOINT{ 100, 100 });
+    SetOffset(FPOINT{ (float)-BOX_SIZE_X / 2, (float)-BOX_SIZE_Y / 2 });
+    SetSize(FPOINT{ (float)BOX_SIZE_X, (float)BOX_SIZE_Y });
     return S_OK;
 }
 
@@ -16,17 +19,19 @@ void Player::Release()
 void Player::Update()
 {
     frameTime += TimerManager::GetSingleton()->GetElapsedTime();
-    if (frameTime > 0.1)
+    if (frameTime > MAX_FRAME_TIME)
     {
         ++frameX;
         frameX %= (frameY == 0) ? 3 : 4;
-        frameTime -= 0.1;
+        frameTime -= MAX_FRAME_TIME;
     }
 }
 
 void Player::Render(HDC hdc)
 {
-    img->FrameRender(hdc, pos.x, pos.y, frameX, frameY, true);
+    FPOINT camPos = Camera::GetSingleton()->WorldToCamera(pos);
+    //img->FrameRender(hdc, camPos.x, camPos.y, frameX, frameY, true);
+    img->StageRender(hdc, pos.x, pos.y, frameX, frameY, true);
     //Rectangle(hdc, pos.x, pos.y, pos.x + 100, pos.y + 100);
 }
 

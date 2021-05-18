@@ -23,6 +23,9 @@ namespace Con
 	const int TILE_X = 20;
 	const int TILE_Y = 20;
 	const int TILESIZE = 20;
+
+	const float CAM_MOUSE_FOLLOW_SCALE = 0.1f;
+	const float CAM_SMOOTH_SPEED = 12.0f;
 }
 // 샘플 타일 정보
 // 640 * 288
@@ -38,6 +41,8 @@ namespace Con
 #define WINSIZE_Y	720
 #define TILEMAPTOOLSIZE_X	1024
 #define TILEMAPTOOLSIZE_Y	900
+#define GAMESCENESIZE_X		1080
+#define GAMESCENESIZE_Y		720
 #define ASTARSIZE_X	1620
 #define ASTARSIZE_Y	900
 

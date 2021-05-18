@@ -12,6 +12,8 @@ class GameScene : public GameNode
 private:
 	Stage* stage;
 	Player* player;
+
+	FPOINT camPos;
 public:
 	virtual HRESULT Init();
 	virtual void Release();
@@ -20,6 +22,7 @@ public:
 
 	void CheckCollision();
 	void CollisionPush(StageObject* movable, StageObject* immovable);
+	void SetCamera();
 
 	virtual ~GameScene() {};
 };

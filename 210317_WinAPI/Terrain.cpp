@@ -2,6 +2,7 @@
 #include "TerrainInfo.h"
 #include "Stage.h"
 #include "Image.h"
+#include "Camera.h"
 
 HRESULT Terrain::Init(Stage* parentStage)
 {
@@ -20,8 +21,11 @@ void Terrain::Update()
 void Terrain::Render(HDC hdc)
 {
 	RECT box = GetBox();
+	FPOINT camPos = Camera::GetSingleton()->WorldToCamera(FPOINT{ (float)box.left, (float)box.top });
+	//parentStage->GetTerrainInfo(type)->GetImg()->
+	//	FrameRender(hdc, camPos.x, camPos.y, framePos.x, framePos.y, false);
 	parentStage->GetTerrainInfo(type)->GetImg()->
-		FrameRender(hdc, box.left, box.top, framePos.x, framePos.y, false);
+		StageRender(hdc, box.left, box.top, framePos.x, framePos.y, false, 1);
 }
 
 void Terrain::SetTerrainType(TerrainType type)

@@ -4,18 +4,25 @@
 #include "Stage.h"
 #include "Player.h"
 #include "StageObject.h"
+#include "Camera.h"
+#include "CommonFunction.h"
 
 HRESULT GameScene::Init()
 {
+	SetClientRect(g_hWnd, GAMESCENESIZE_X, GAMESCENESIZE_Y);
+
+	Camera* cam = Camera::GetSingleton();
+	cam->SetScreenSize(POINT{ GAMESCENESIZE_X , GAMESCENESIZE_Y });
+	cam->SetScale(1.5f);
+
 	stage = new Stage();
 	stage->Init(POINT{ Con::TILESIZE, Con::TILESIZE });
 	stage->Load();
 
 	player = new Player();
 	player->Init();
-	player->SetPos(FPOINT{100, 100});
-	player->SetOffset(FPOINT{-10, -10});
-	player->SetSize(FPOINT{20, 20});
+
+	camPos = player->GetPos();
 
 	return S_OK;
 }
@@ -28,9 +35,19 @@ void GameScene::Release()
 
 void GameScene::Update()
 {
+	Camera* cam = Camera::GetSingleton();
+	FPOINT worldMouse = cam->CameraToWorld(toFpoint(g_ptMouse));
+	if (KeyManager::GetSingleton()->IsStayKeyDown('Z'))
+	{
+		cam->SetScale(cam->GetScale() - 1.0f * TimerManager::GetSingleton()->GetElapsedTime());
+	}
+	if (KeyManager::GetSingleton()->IsStayKeyDown('X'))
+	{
+		cam->SetScale(cam->GetScale() + 1.0f * TimerManager::GetSingleton()->GetElapsedTime());
+	}
 	if (KeyManager::GetSingleton()->IsOnceKeyDown(VK_LBUTTON))
 	{
-		POINT selTile = stage->PosToTile(g_ptMouse);
+		POINT selTile = stage->PosToTile(worldMouse);
 		if (stage->CanBuild(RECT{ selTile.x, selTile.y, selTile.x, selTile.y }))
 		{
 			stage->BuildStructure(selTile, 0);
@@ -60,10 +77,14 @@ void GameScene::Update()
 	stage->Update();
 	player->Update();
 	CheckCollision();
+	
 }
 
 void GameScene::Render(HDC hdc)
 {
+	SetCamera();
+	PatBlt(hdc, 0, 0,
+		GAMESCENESIZE_X, GAMESCENESIZE_X, WHITENESS);
 	stage->Render(hdc);
 	player->Render(hdc);
 }
@@ -130,4 +151,24 @@ void GameScene::CollisionPush(StageObject* movable, StageObject* immovable)
 	}
 
 	SAFE_DELETE(resultRect);
+}
+
+void GameScene::SetCamera()
+{
+	float mouseFollowScale = Con::CAM_MOUSE_FOLLOW_SCALE;
+	float smoothSpeed = 
+		Con::CAM_SMOOTH_SPEED * TimerManager::GetSingleton()->GetElapsedTime();
+	Camera* cam = Camera::GetSingleton();
+	FPOINT mouseWorldPos =
+		cam->CameraToWorld(FPOINT{ (float)g_ptMouse.x, (float)g_ptMouse.y });
+	FPOINT targetPos = FPOINT{
+		player->GetPos().x * (1 - mouseFollowScale) +
+		mouseWorldPos.x * mouseFollowScale,
+		player->GetPos().y * (1 - mouseFollowScale) +
+		mouseWorldPos.y * mouseFollowScale };
+	camPos = FPOINT{
+		camPos.x * (1 - smoothSpeed) + targetPos.x * smoothSpeed,
+		camPos.y * (1 - smoothSpeed) + targetPos.y * smoothSpeed,
+	};
+	cam->SetPosCenter(camPos);
 }
