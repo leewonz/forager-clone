@@ -31,6 +31,26 @@ HRESULT ImageManager::Init()
         "Image/sampleBuilding.bmp", 30, 42, 
         true, RGB(255, 0, 255));
 
+    ImageManager::GetSingleton()->AddImage("item_noneItem",
+        "Image/item/noneItem.bmp", 32, 32,
+        true, RGB(255, 0, 255));
+
+    ImageManager::GetSingleton()->AddImage("item_bone",
+        "Image/item/bone.bmp", 32, 32,
+        true, RGB(255, 0, 255));
+
+    ImageManager::GetSingleton()->AddImage("item_stone",
+        "Image/item/stone.bmp", 32, 32,
+        true, RGB(255, 0, 255));
+
+    ImageManager::GetSingleton()->AddImage("item_flower",
+        "Image/item/flower.bmp", 32, 32,
+        true, RGB(255, 0, 255));
+
+    ImageManager::GetSingleton()->AddImage("item_wood",
+        "Image/item/wood.bmp", 32, 32,
+        true, RGB(255, 0, 255));
+
     ImageManager::GetSingleton()->AddImage("char_theForager",
         "Image/char_theForager.bmp", 48, 32, 4, 2,
         true, RGB(255, 0, 255));

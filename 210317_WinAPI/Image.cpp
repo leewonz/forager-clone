@@ -155,7 +155,36 @@ void Image::Render(HDC hdc, int destX, int destY, bool isCenterRenderring)
   
 }
 
+void Image::Render(HDC hdc, RECT src, RECT dest)
+{
 
+    if (isTransparent)
+    {
+        // 특정 색상을 빼고 복사하는 함수
+        GdiTransparentBlt(
+            hdc,
+            dest.left, dest.top,
+            dest.right - dest.left, dest.bottom - dest.top,
+
+            imageInfo->hMemDC,
+            src.left, src.top,
+            src.right - src.left, src.bottom - src.top,
+            transColor
+        );
+    }
+    else
+    {
+        StretchBlt(hdc,
+            dest.left, dest.top,
+            dest.right - dest.left,
+            dest.bottom - dest.top,
+            imageInfo->hMemDC,
+            src.left, src.top,
+            src.right - src.left,
+            src.bottom - src.top,
+            SRCCOPY);
+    }
+}
 
 void Image::FrameRender(HDC hdc, int destX, int destY,
     int currFrameX, int currFrameY, bool isCenterRenderring, float size)
@@ -165,57 +194,38 @@ void Image::FrameRender(HDC hdc, int destX, int destY,
 
     int x = destX;
     int y = destY;
+
     if (isCenterRenderring)
     {
-        x = destX - (imageInfo->frameWidth * size / 2);
-        y = destY - (imageInfo->frameHeight * size / 2);
+        POINT offset = OffsetFromCenter(size);
+        x += offset.x;
+        y += offset.y;
     }
 
-    if (isTransparent)
-    {
-        // 특정 색상을 빼고 복사하는 함수
-        GdiTransparentBlt(
-            hdc,                // 목적지 DC
-            x, y,               // 복사 위치
-            imageInfo->frameWidth * size,
-            imageInfo->frameHeight * size,  // 복사 크기
+    RECT src = { imageInfo->frameWidth * imageInfo->currFrameX,
+                 imageInfo->frameHeight * imageInfo->currFrameY,
+                 imageInfo->frameWidth * (imageInfo->currFrameX + 1),
+                 imageInfo->frameHeight * (imageInfo->currFrameY + 1), };
 
-            imageInfo->hMemDC,  // 원본 DC
-            imageInfo->frameWidth * imageInfo->currFrameX,  // 복사 X 위치
-            imageInfo->frameHeight * imageInfo->currFrameY, // 복사 Y 위치
-            imageInfo->frameWidth, imageInfo->frameHeight,  // 복사 크기
-            transColor  // 제외할 색상
-        );
-    }
-    else
-    {
-        if (size > 1)
-        {
-            StretchBlt(hdc,
-                x, y,
-                imageInfo->frameWidth * size,
-                imageInfo->frameHeight * size,
-                imageInfo->hMemDC,
-                imageInfo->frameWidth * imageInfo->currFrameX,
-                imageInfo->frameHeight * imageInfo->currFrameY,
-                imageInfo->frameWidth,
-                imageInfo->frameHeight,
-                SRCCOPY);        
-        }       
-        else
-        {
-            BitBlt(
-                hdc,
-                x, y,
-                imageInfo->frameWidth,
-                imageInfo->frameHeight,
-                imageInfo->hMemDC,
-                imageInfo->frameWidth * imageInfo->currFrameX,
-                imageInfo->frameHeight * imageInfo->currFrameY,
-                SRCCOPY
-            );
-        }
-    }
+    RECT dest = { x,
+                  y,
+                  x + (int)(imageInfo->frameWidth * size),
+                  y + (int)(imageInfo->frameHeight * size) };
+    
+    Render(hdc, src, dest);
+}
+
+void Image::FrameRender(HDC hdc, RECT dest, int currFrameX, int currFrameY)
+{
+    imageInfo->currFrameX = currFrameX;
+    imageInfo->currFrameY = currFrameY;
+
+    RECT src = { imageInfo->frameWidth * imageInfo->currFrameX,
+                 imageInfo->frameHeight * imageInfo->currFrameY,
+                 imageInfo->frameWidth * (imageInfo->currFrameX + 1),
+                 imageInfo->frameHeight * (imageInfo->currFrameY + 1), };
+
+    Render(hdc, src, dest);
 }
 
 void Image::AlphaRender(HDC hdc, int destX, int destY, bool isCenterRenderring)
@@ -242,12 +252,27 @@ void Image::AlphaRender(HDC hdc, int destX, int destY, bool isCenterRenderring)
         imageInfo->hBlendDC, 0, 0, imageInfo->width, imageInfo->height, blendFunc);
 }
 
-void Image::StageRender(HDC hdc, int destX, int destY, int currFrameX, int currFrameY, bool isCenterRenderring, float size)
+void Image::StageRender(HDC hdc, float destX, float destY, int currFrameX, int currFrameY, bool isCenterRendering, float size)
 {
     Camera* cam = Camera::GetSingleton();
     FPOINT camPos = cam->WorldToCamera(FPOINT{ (float)destX, (float)destY });
-    float camSize = cam->GetScale();
-    FrameRender(hdc, camPos.x, camPos.y, currFrameX, currFrameY, isCenterRenderring, size * camSize);
+    float camScale = cam->GetScale();
+    POINT camSize = cam->GetScreenSize();
+    if (isCenterRendering)
+    {
+        POINT offset = OffsetFromCenter(size * camScale);
+        camPos.x += offset.x;
+        camPos.y += offset.y;
+    }
+    RECT destRect = RECT{ (LONG)camPos.x,
+                          (LONG)camPos.y,
+                          (LONG)(camPos.x + (imageInfo->frameWidth * size * camScale)),
+                          (LONG)(camPos.y + (imageInfo->frameHeight * size * camScale)) };
+    RECT intersection = RECT{ 0, 0, 0, 0 };
+    RECT screenRect = RECT{ 0,0, camSize.x, camSize.y };
+    if (!IntersectRect(&intersection, &screenRect, &destRect)) { return; }
+    //FrameRender(hdc, camPos.x, camPos.y, currFrameX, currFrameY, isCenterRendering, size * camScale);
+    FrameRender(hdc, destRect, currFrameX, currFrameY);
 }
 
 void Image::Release()

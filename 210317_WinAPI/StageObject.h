@@ -17,6 +17,8 @@ public:
 	inline void SetSize(FPOINT size) { this->size = size; }
 	inline FPOINT GetSize() { return size; }
 	RECT GetBox();
+	FPOINT GetStartPoint();
+	FPOINT GetEndPoint();
 	void CenterOffset();
 };
 

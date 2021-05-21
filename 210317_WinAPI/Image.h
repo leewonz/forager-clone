@@ -81,11 +81,13 @@ public:
 	// 화면에 출력
 	void Render(HDC hdc, int destX = 0, int destY = 0,
 		bool isCenterRenderring = false);
+	void Render(HDC hdc, RECT src, RECT dest);
 	void FrameRender(HDC hdc, int destX, int destY,
 		int currFrameX, int currFrameY, bool isCenterRenderring = false, float size = 1);
+	void FrameRender(HDC hdc, RECT dest, int currFrameX, int currFrameY);
 	void AlphaRender(HDC hdc, int destX, int destY,
 		bool isCenterRenderring = false);
-	void StageRender(HDC hdc, int destX, int destY,
+	void StageRender(HDC hdc, float destX, float destY,
 		int currFrameX, int currFrameY, bool isCenterRenderring = false, float size = 1);
 
 	void Release();
@@ -106,6 +108,13 @@ public:
 	int GetFrameHeight() { return this->imageInfo->frameHeight; }
 
 	IMAGE_INFO* const  GetImageInfo() { return this->imageInfo; }
+
+	inline POINT OffsetFromCenter(float scale)
+	{
+		return POINT{
+		-(int)(imageInfo->frameWidth * scale / 2),
+		-(int)(imageInfo->frameHeight * scale / 2) };
+	}
 
 	static void StageRectangle(HDC hdc, RECT rect);
 

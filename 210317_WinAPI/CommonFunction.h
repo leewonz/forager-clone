@@ -10,7 +10,7 @@ inline float GetAngle(FPOINT pos, FPOINT targetPos)
 	float x = targetPos.x - pos.x;
 	float y = targetPos.y - pos.y;
 
-	angle = atan2(-y, x);
+	angle = (float)atan2(-y, x);
 
 	return angle;
 }

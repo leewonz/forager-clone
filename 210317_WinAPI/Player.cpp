@@ -54,7 +54,7 @@ void Player::Move(FPOINT dir)
             frameX = 0;
         }
 
-        float angle = atan2(dir.y, dir.x);
+        float angle = (float)atan2(dir.y, dir.x);
 
         pos.x += cosf(angle) * MOVE_SPEED * 
             TimerManager::GetSingleton()->GetElapsedTime();

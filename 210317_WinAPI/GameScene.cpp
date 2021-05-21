@@ -5,11 +5,17 @@
 #include "Player.h"
 #include "StageObject.h"
 #include "Camera.h"
+#include "InventoryContainer.h"
+#include "Inventory.h"
+#include "UIInventory.h"
+#include "GameData.h"
 #include "CommonFunction.h"
 
 HRESULT GameScene::Init()
 {
 	SetClientRect(g_hWnd, GAMESCENESIZE_X, GAMESCENESIZE_Y);
+
+	GameData::GetSingleton()->InitItemInfo();
 
 	Camera* cam = Camera::GetSingleton();
 	cam->SetScreenSize(POINT{ GAMESCENESIZE_X , GAMESCENESIZE_Y });
@@ -22,6 +28,13 @@ HRESULT GameScene::Init()
 	player = new Player();
 	player->Init();
 
+	inventoryContainer = new InventoryContainer();
+	inventoryContainer->Init();
+
+	uiInventory = new UIInventory();
+	uiInventory->Init();
+	uiInventory->SetInventory(inventoryContainer->GetPlayerInventory());
+
 	camPos = player->GetPos();
 
 	return S_OK;
@@ -31,6 +44,8 @@ void GameScene::Release()
 {
 	SAFE_RELEASE(stage);
 	SAFE_RELEASE(player);
+	SAFE_RELEASE(inventoryContainer);
+	SAFE_RELEASE(uiInventory);
 }
 
 void GameScene::Update()
@@ -74,6 +89,38 @@ void GameScene::Update()
 		}
 		player->Move(moveDir);
 	}
+	if (inventoryContainer
+		&& inventoryContainer->GetPlayerInventory())
+	{
+		bool shiftDown = KeyManager::GetSingleton()->IsStayKeyDown(VK_LSHIFT);
+		int itemNum = 0;
+		{
+			if (KeyManager::GetSingleton()->IsOnceKeyDown('1')) { itemNum = 1; }
+			if (KeyManager::GetSingleton()->IsOnceKeyDown('2')) { itemNum = 2; }
+			if (KeyManager::GetSingleton()->IsOnceKeyDown('3')) { itemNum = 3; }
+			if (KeyManager::GetSingleton()->IsOnceKeyDown('4')) { itemNum = 4; }
+		}
+		
+		if(itemNum != 0)
+		{
+			if (shiftDown)
+			{
+				inventoryContainer->GetPlayerInventory()->RemoveItem(Inventory::Item{ itemNum, 1 });
+			}
+			else
+			{
+				inventoryContainer->GetPlayerInventory()->AddItem(Inventory::Item{ itemNum, 1 });
+			}
+		}
+	}
+	if (uiInventory)
+	{
+		if (KeyManager::GetSingleton()->IsOnceKeyDown(VK_TAB))
+		{
+			uiInventory->SetActive(!uiInventory->GetActive());
+		}
+	}
+
 	stage->Update();
 	player->Update();
 	CheckCollision();
@@ -87,6 +134,7 @@ void GameScene::Render(HDC hdc)
 		GAMESCENESIZE_X, GAMESCENESIZE_X, WHITENESS);
 	stage->Render(hdc);
 	player->Render(hdc);
+	uiInventory->Render(hdc);
 }
 
 void GameScene::CheckCollision()

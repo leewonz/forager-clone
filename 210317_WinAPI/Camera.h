@@ -35,7 +35,7 @@ public:
 	inline FPOINT WorldToCamera(FPOINT worldSpacePos) 
 	{
 		return FPOINT{ (worldSpacePos.x - pos.x) * scale,
-					   (worldSpacePos.y - pos.y) * scale};
+					   (worldSpacePos.y - pos.y) * scale };
 	}
 
 	inline FPOINT CameraToWorld(FPOINT cameraSpacePos)

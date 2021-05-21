@@ -7,11 +7,15 @@ class Stage;
 class StageObject;
 class Image;
 class Player;
+class UIInventory;
+class InventoryContainer;
 class GameScene : public GameNode
 {
 private:
 	Stage* stage;
 	Player* player;
+	UIInventory* uiInventory;
+	InventoryContainer* inventoryContainer;
 
 	FPOINT camPos;
 public:

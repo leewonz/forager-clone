@@ -142,6 +142,7 @@
   <ItemGroup>
     <ClCompile Include="AstarScene.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="GameData.cpp" />
     <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="config.cpp" />
@@ -150,6 +151,8 @@
     <ClCompile Include="GameNode.cpp" />
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="ImageManager.cpp" />
+    <ClCompile Include="Inventory.cpp" />
+    <ClCompile Include="InventoryContainer.cpp" />
     <ClCompile Include="KeyManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainGame.cpp" />
@@ -166,10 +169,14 @@
     <ClCompile Include="TilemapTool.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="TimerManager.cpp" />
+    <ClCompile Include="UIContainer.cpp" />
+    <ClCompile Include="UIInventory.cpp" />
+    <ClCompile Include="UIObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AstarScene.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="GameData.h" />
     <ClInclude Include="GameScene.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="CommonFunction.h" />
@@ -179,6 +186,8 @@
     <ClInclude Include="GameNode.h" />
     <ClInclude Include="Image.h" />
     <ClInclude Include="ImageManager.h" />
+    <ClInclude Include="Inventory.h" />
+    <ClInclude Include="InventoryContainer.h" />
     <ClInclude Include="KeyManager.h" />
     <ClInclude Include="MainGame.h" />
     <ClInclude Include="Missile.h" />
@@ -195,6 +204,9 @@
     <ClInclude Include="TilemapTool.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="TimerManager.h" />
+    <ClInclude Include="UIContainer.h" />
+    <ClInclude Include="UIInventory.h" />
+    <ClInclude Include="UIObject.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
