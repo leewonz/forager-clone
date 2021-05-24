@@ -5,7 +5,9 @@ class Scene;
 enum class UI_MESSAGE
 {
 	NONE,
-	OK
+	BLOCKED,
+	OK,
+	END
 };
 
 class UIObject : public GameNode
@@ -41,13 +43,18 @@ public:
 	inline Scene* GetScene() { return scene; }
 
 	// 선택된 리프 노드 반환. 선택된 게 없으면 nullptr 반환.
-	virtual pair<UI_MESSAGE, int> MouseDown(POINT pos) = 0;
+	virtual pair<UI_MESSAGE, int> MouseDown(POINT mousePos) = 0;
 	// 선택된 리프 노드 반환. 선택된 게 없으면 nullptr 반환.
-	virtual pair<UI_MESSAGE, int> MouseUp(POINT pos) = 0;
+	virtual pair<UI_MESSAGE, int> MouseUp(POINT mousePos) = 0;
 	// SetActive로 자신이 켜졌을 때 호출
 	virtual void OnActivate() = 0;
 	// SetActive로 자신이 꺼졌을 때 호출
 	virtual void OnDeactivate() = 0;
+
+	inline static bool GetIsClicked(pair<UI_MESSAGE, int> msg) 
+	{
+		return msg.first != UI_MESSAGE::NONE;
+	}
 
 	RECT GetBox();
 };

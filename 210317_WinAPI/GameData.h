@@ -26,6 +26,12 @@ struct ItemInfo
 	string name;
 };
 
+struct Item
+{
+	int idx;
+	int count;
+};
+
 class GameData : public Singleton<GameData>
 {
 private:

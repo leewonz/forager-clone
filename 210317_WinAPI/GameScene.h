@@ -9,6 +9,7 @@ class Image;
 class Player;
 class UIInventory;
 class InventoryContainer;
+class DropContainer;
 class GameScene : public GameNode
 {
 private:
@@ -16,6 +17,7 @@ private:
 	Player* player;
 	UIInventory* uiInventory;
 	InventoryContainer* inventoryContainer;
+	DropContainer* dropContainer;
 
 	FPOINT camPos;
 public:
@@ -25,7 +27,9 @@ public:
 	virtual void Render(HDC hdc);
 
 	void CheckCollision();
+	void CheckCollisionPlayerAndItem();
 	void CollisionPush(StageObject* movable, StageObject* immovable);
+	bool CheckIfColliding(StageObject* obj1, StageObject* obj2);
 	void SetCamera();
 
 	virtual ~GameScene() {};

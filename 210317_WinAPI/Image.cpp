@@ -151,8 +151,43 @@ void Image::Render(HDC hdc, int destX, int destY, bool isCenterRenderring)
             SRCCOPY             // 복사 옵션
         );     
     }
+}
 
-  
+void Image::Render(HDC hdc, int destX, int destY, float scale, bool isCenterRenderring)
+{
+    int x = destX;
+    int y = destY;
+    if (isCenterRenderring)
+    {
+        x = destX - (scale * imageInfo->width / 2);
+        y = destY - (scale * imageInfo->height / 2);
+    }
+
+    if (isTransparent)
+    {
+        // 특정 색상을 빼고 복사하는 함수
+        GdiTransparentBlt(
+            hdc,
+            x, y,
+            imageInfo->width * scale, imageInfo->height * scale,
+            imageInfo->hMemDC,
+            0, 0,
+            imageInfo->width, imageInfo->height,
+            transColor
+        );
+    }
+    else
+    {
+        StretchBlt(hdc,
+            x, x,
+            imageInfo->width * scale,
+            imageInfo->height * scale,
+            imageInfo->hMemDC,
+            0, 0, 
+            imageInfo->width,
+            imageInfo->width,
+            SRCCOPY);
+    }
 }
 
 void Image::Render(HDC hdc, RECT src, RECT dest)

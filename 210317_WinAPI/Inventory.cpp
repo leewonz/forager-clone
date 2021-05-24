@@ -1,9 +1,14 @@
 #include "Inventory.h"
+#include <algorithm>
 
-HRESULT Inventory::Init(InventoryContainer* container, int capacity)
+const Item Inventory::EMPTY_ITEM = Item{ 0, 0 };
+
+HRESULT Inventory::Init(InventoryContainer* container, int size)
 {
 	SetContainer(container);
-	this->capacity = capacity;
+	this->size = size;
+	items.resize(this->size);
+	fill(items.begin(), items.end(), EMPTY_ITEM);
 	return S_OK;
 }
 
@@ -15,6 +20,7 @@ void Inventory::Release()
 bool Inventory::AddItem(Item item)
 {
 	vector<Item>::iterator iter;
+	iter = items.begin();
 	for (iter = items.begin(); iter != items.end(); iter++)
 	{
 		if (iter->idx == item.idx)
@@ -22,29 +28,34 @@ bool Inventory::AddItem(Item item)
 			iter->count += item.count;
 			return true;
 		}
+		else if (IsEmpty(*iter))
+		{
+			*iter = item;
+			return true;
+		}
 	}
-	if (items.size() == capacity)
-	{
-		return false;
-	}
-	else
-	{
-		items.push_back(item);
-		return true;
-	}
+
+	return false;
 }
 
 bool Inventory::AddItem(Item item, int slot)
 {
-	if (slot < items.size() && items[slot].idx == item.idx)
+	int temp = 0;
+	if (slot < items.size())
 	{
-		items[slot].count += item.count;
-		return true;
+		if (items[slot].idx == item.idx)
+		{
+			items[slot].count += item.count;
+			return true;
+		}
+		else if (IsEmpty(items[slot]))
+		{
+			items[slot] = item;
+			return true;
+		}
 	}
-	else
-	{
-		return false;
-	}
+
+	return false;
 }
 
 bool Inventory::RemoveItem(Item item)
@@ -57,10 +68,11 @@ bool Inventory::RemoveItem(Item item)
 			if (iter->count > item.count)
 			{
 				iter->count -= item.count;
+				return true;
 			}
 			else if (iter->count == item.count)
 			{
-				items.erase(iter);
+				*iter = EMPTY_ITEM;
 				return true;
 			}
 			else
@@ -72,27 +84,41 @@ bool Inventory::RemoveItem(Item item)
 	return true;
 }
 
-bool Inventory::RemoveItem(int slot, int count)
+Item Inventory::RemoveItem(int slot, int count)
 {
-	if (items[slot].idx == items[slot].idx)
+	if (slot < items.size())
 	{
-		if (items[slot].count > count)
+		Item item = items[slot];
+		if (item.count > count)
 		{
 			items[slot].count -= count;
+			return Item{ item.idx, count };
 		}
-		else if (items[slot].count == count)
+		else if (item.count == count)
 		{
-			items.erase(items.begin() + slot);
+			items[slot] = EMPTY_ITEM;
+			return Item{ item.idx, count };
 		}
 		else
 		{
-			return false;
+			return EMPTY_ITEM;
 		}
 	}
-	return true;
+	return EMPTY_ITEM;
 }
 
-Inventory::Item Inventory::GetItem(int slot)
+Item Inventory::RemoveItem(int slot)
+{
+	if (slot < items.size())
+	{
+		Item item = items[slot];
+		items[slot] = EMPTY_ITEM;
+		return item;
+	}
+	return EMPTY_ITEM;
+}
+
+Item Inventory::GetItem(int slot)
 {
 	if (slot < items.size())
 	{
@@ -100,7 +126,7 @@ Inventory::Item Inventory::GetItem(int slot)
 	}
 	else
 	{
-		return Item{ 0, 0 };
+		return EMPTY_ITEM;
 	}
 }
 

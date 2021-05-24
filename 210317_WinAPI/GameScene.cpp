@@ -8,6 +8,8 @@
 #include "InventoryContainer.h"
 #include "Inventory.h"
 #include "UIInventory.h"
+#include "DropContainer.h"
+#include "Drop.h"
 #include "GameData.h"
 #include "CommonFunction.h"
 
@@ -31,8 +33,11 @@ HRESULT GameScene::Init()
 	inventoryContainer = new InventoryContainer();
 	inventoryContainer->Init();
 
+	dropContainer = new DropContainer();
+	dropContainer->Init();
+
 	uiInventory = new UIInventory();
-	uiInventory->Init();
+	uiInventory->Init(POINT{ Con::INVEN_PLAYER_X, Con::INVEN_PLAYER_Y });
 	uiInventory->SetInventory(inventoryContainer->GetPlayerInventory());
 
 	camPos = player->GetPos();
@@ -45,6 +50,7 @@ void GameScene::Release()
 	SAFE_RELEASE(stage);
 	SAFE_RELEASE(player);
 	SAFE_RELEASE(inventoryContainer);
+	SAFE_RELEASE(dropContainer);
 	SAFE_RELEASE(uiInventory);
 }
 
@@ -52,22 +58,47 @@ void GameScene::Update()
 {
 	Camera* cam = Camera::GetSingleton();
 	FPOINT worldMouse = cam->CameraToWorld(toFpoint(g_ptMouse));
+
 	if (KeyManager::GetSingleton()->IsStayKeyDown('Z'))
 	{
 		cam->SetScale(cam->GetScale() - 1.0f * TimerManager::GetSingleton()->GetElapsedTime());
 	}
+
 	if (KeyManager::GetSingleton()->IsStayKeyDown('X'))
 	{
 		cam->SetScale(cam->GetScale() + 1.0f * TimerManager::GetSingleton()->GetElapsedTime());
 	}
+
+	if (KeyManager::GetSingleton()->IsStayKeyDown('C'))
+	{
+		dropContainer->AddDrop(Item{ (rand() % 4) + 1,1 }, FPOINT{ (float)(rand() % 1000), (float)(rand() % 1000) });
+	}
+
 	if (KeyManager::GetSingleton()->IsOnceKeyDown(VK_LBUTTON))
 	{
+		bool isUIClicked = false;
 		POINT selTile = stage->PosToTile(worldMouse);
-		if (stage->CanBuild(RECT{ selTile.x, selTile.y, selTile.x, selTile.y }))
+
+		if (!isUIClicked)
 		{
-			stage->BuildStructure(selTile, 0);
+			isUIClicked = UIObject::GetIsClicked(uiInventory->MouseDown(g_ptMouse));
 		}
+		
+		if (!isUIClicked)
+		{
+			if (stage->CanBuild(RECT{ selTile.x, selTile.y, selTile.x, selTile.y }))
+			{
+				stage->BuildStructure(selTile, 0);
+			}
+		}
+
 	}
+
+	if (KeyManager::GetSingleton()->IsOnceKeyUp(VK_LBUTTON))
+	{
+		uiInventory->MouseUp(g_ptMouse);
+	}
+
 	if (player)
 	{
 		FPOINT moveDir = FPOINT{ 0.0f, 0.0f };
@@ -89,6 +120,7 @@ void GameScene::Update()
 		}
 		player->Move(moveDir);
 	}
+
 	if (inventoryContainer
 		&& inventoryContainer->GetPlayerInventory())
 	{
@@ -105,14 +137,15 @@ void GameScene::Update()
 		{
 			if (shiftDown)
 			{
-				inventoryContainer->GetPlayerInventory()->RemoveItem(Inventory::Item{ itemNum, 1 });
+				inventoryContainer->GetPlayerInventory()->RemoveItem(Item{ itemNum, 1 });
 			}
 			else
 			{
-				inventoryContainer->GetPlayerInventory()->AddItem(Inventory::Item{ itemNum, 1 });
+				inventoryContainer->GetPlayerInventory()->AddItem(Item{ itemNum, 1 });
 			}
 		}
 	}
+
 	if (uiInventory)
 	{
 		if (KeyManager::GetSingleton()->IsOnceKeyDown(VK_TAB))
@@ -124,7 +157,7 @@ void GameScene::Update()
 	stage->Update();
 	player->Update();
 	CheckCollision();
-	
+	CheckCollisionPlayerAndItem();
 }
 
 void GameScene::Render(HDC hdc)
@@ -132,38 +165,60 @@ void GameScene::Render(HDC hdc)
 	SetCamera();
 	PatBlt(hdc, 0, 0,
 		GAMESCENESIZE_X, GAMESCENESIZE_X, WHITENESS);
-	stage->Render(hdc);
-	player->Render(hdc);
-	uiInventory->Render(hdc);
+	if (stage) { stage->Render(hdc); }
+	if (player) { player->Render(hdc); }
+	if (uiInventory) { uiInventory->Render(hdc); }
+	if (dropContainer) { dropContainer->Render(hdc); }
 }
 
 void GameScene::CheckCollision()
 {
-	int tileCheckRange = 3;
-	// 플레이어 - 타일
-	POINT plTilePos = stage->PosToTile(player->GetPos());
-	RECT plCheckRegion = RECT{
-		max(plTilePos.x - tileCheckRange, 0),
-		max(plTilePos.y - tileCheckRange, 0),
-		min(plTilePos.x + tileCheckRange, Con::TILE_X - 1),
-		min(plTilePos.y + tileCheckRange, Con::TILE_Y - 1)
-	};
-	for (int y = plCheckRegion.top; y <= plCheckRegion.bottom; y++)
+	if (stage && player)
 	{
-		for (int x = plCheckRegion.left; x <= plCheckRegion.right; x++)
+		int tileCheckRange = 3;
+		// 플레이어 - 타일
+		POINT plTilePos = stage->PosToTile(player->GetPos());
+		RECT plCheckRegion = RECT{
+			max(plTilePos.x - tileCheckRange, 0),
+			max(plTilePos.y - tileCheckRange, 0),
+			min(plTilePos.x + tileCheckRange, Con::TILE_X - 1),
+			min(plTilePos.y + tileCheckRange, Con::TILE_Y - 1)
+		};
+		for (int y = plCheckRegion.top; y <= plCheckRegion.bottom; y++)
 		{
-			Terrain* currTerrain = stage->GetTerrain(POINT{ x, y });
-			if (!currTerrain->GetIsLand()) 
+			for (int x = plCheckRegion.left; x <= plCheckRegion.right; x++)
 			{
-				CollisionPush(player, currTerrain);
-			}
+				Terrain* currTerrain = stage->GetTerrain(POINT{ x, y });
+				if (!currTerrain->GetIsLand()) 
+				{
+					CollisionPush(player, currTerrain);
+				}
 
-			StageObject* currStructure = (StageObject*)currTerrain->GetStructure();
-			if (currStructure)
-			{
-				CollisionPush(player, currStructure);
+				StageObject* currStructure = (StageObject*)currTerrain->GetStructure();
+				if (currStructure)
+				{
+					CollisionPush(player, currStructure);
+				}
 			}
 		}
+	}
+}
+
+void GameScene::CheckCollisionPlayerAndItem()
+{
+	if (dropContainer && player)
+	{
+		for (int i = 0; i < dropContainer->GetSize(); i++)
+		{
+			Drop* drop = dropContainer->GetDrop(i);
+			if (CheckIfColliding(player, (StageObject*)drop))
+			{
+				dropContainer->RemoveDrop(i);
+				inventoryContainer->GetPlayerInventory()->
+					AddItem(drop->GetItem());
+			}
+		}
+
 	}
 }
 
@@ -199,6 +254,15 @@ void GameScene::CollisionPush(StageObject* movable, StageObject* immovable)
 	}
 
 	SAFE_DELETE(resultRect);
+}
+
+bool GameScene::CheckIfColliding(StageObject* obj1, StageObject* obj2)
+{
+	RECT resultRect = RECT{ 0, 0, 0, 0 };
+	RECT* obj1Rect = &obj1->GetBox();
+	RECT* obj2Rect = &obj2->GetBox();
+
+	return (IntersectRect(&resultRect, obj1Rect, obj2Rect));
 }
 
 void GameScene::SetCamera()

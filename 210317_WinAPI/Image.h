@@ -81,6 +81,8 @@ public:
 	// 화면에 출력
 	void Render(HDC hdc, int destX = 0, int destY = 0,
 		bool isCenterRenderring = false);
+	void Render(HDC hdc, int destX, int destY,
+		float scale, bool isCenterRenderring = false);
 	void Render(HDC hdc, RECT src, RECT dest);
 	void FrameRender(HDC hdc, int destX, int destY,
 		int currFrameX, int currFrameY, bool isCenterRenderring = false, float size = 1);
