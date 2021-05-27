@@ -12,17 +12,14 @@
 // Floor: Terrain 위에 놓을 수 있는 것(다리 등). Structure를 설치할 수 있게 함.
 // Structure: 건물과 파괴 가능한 자원을 포함.
 
-class TerrainInfo;
+
 class Structure;
-class StructureInfo;
+
 class Stage : public GameNode
 {
 private:
 	Terrain terrainTiles[Con::TILE_Y][Con::TILE_X];
 	vector<Structure*> structures;
-
-	vector<TerrainInfo*> terrainInfos;
-	vector<StructureInfo*> structureInfos;
 
 	enum AdjDirs {R = 1, D = 2, L = 4, U = 8};
 	POINT adjTileShape[16];
@@ -88,8 +85,7 @@ public:
 	void RefreshTileShapeAll();
 
 	Terrain* GetTerrain(POINT TilePos);
-	TerrainInfo* GetTerrainInfo(TerrainType i);
-	StructureInfo* GetStructureInfo(int i);
+
 	void ChangeTerrain(POINT posIdx, TerrainType type, bool isLand);
 };
 

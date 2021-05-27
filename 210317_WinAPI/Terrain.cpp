@@ -1,5 +1,6 @@
 #include "Terrain.h"
 #include "TerrainInfo.h"
+
 #include "Stage.h"
 #include "Image.h"
 #include "Camera.h"
@@ -24,7 +25,7 @@ void Terrain::Render(HDC hdc)
 	//FPOINT camPos = Camera::GetSingleton()->WorldToCamera(FPOINT{ startPoint.x, startPoint.y });
 	//parentStage->GetTerrainInfo(type)->GetImg()->
 	//	FrameRender(hdc, camPos.x, camPos.y, framePos.x, framePos.y, false);
-	parentStage->GetTerrainInfo(type)->GetImg()->
+	GameData::GetSingleton()->GetTerrainInfo(type)->GetImg()->
 		StageRender(hdc, startPoint.x, startPoint.y, framePos.x, framePos.y, false, 1);
 }
 

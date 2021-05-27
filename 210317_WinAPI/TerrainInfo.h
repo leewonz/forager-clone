@@ -1,7 +1,6 @@
 #pragma once
 
 class Image;
-enum class TerrainType { GRASS, DESERT, WINTER, GRAVEYARD, FIRE, END };
 class TerrainInfo
 {
 private:

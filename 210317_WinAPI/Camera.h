@@ -18,7 +18,8 @@ public:
 	inline POINT GetScreenSize() { return screenSize; }
 	inline void SetScreenSize(POINT screenSize) { this->screenSize = screenSize; }
 
-	HRESULT Init();
+	HRESULT Init(); 
+	virtual HRESULT InitSingleton();
 
 	inline FPOINT GetPosCenter() 
 	{

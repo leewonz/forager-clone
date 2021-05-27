@@ -12,6 +12,7 @@ protected:
 	Singleton() {};
 	~Singleton() {};
 
+protected:
 public:
 	static T* GetSingleton();
 	void ReleaseSingleton();

@@ -109,7 +109,7 @@ void UIInventory::Render(HDC hdc)
 	{
 		//Rectangle(hdc, 0, 0, 100, 100);
 		Item item;
-		ItemInfo info;
+		ItemInfo* info;
 
 		for (int i = 0; i < slotGridCount.x * slotGridCount.y; i++)
 		{
@@ -121,10 +121,10 @@ void UIInventory::Render(HDC hdc)
 			info = GameData::GetSingleton()->GetItemInfo(item.idx);
 
 			Rectangle(hdc, slotRect.left, slotRect.top, slotRect.right, slotRect.bottom);
-			info.img->Render(hdc, slotRect.left, slotRect.top, 2.0f, false);
+			info->img->Render(hdc, slotRect.left, slotRect.top, 2.0f, false);
 			wsprintf(szText, "%d", item.count);
 			TextOut(hdc, slotRect.left, slotRect.top + 50, szText, strlen(szText));
-			wsprintf(szText, info.name.c_str());
+			wsprintf(szText, info->name.c_str());
 			TextOut(hdc, slotRect.left, slotRect.top + 65, szText, strlen(szText));
 		}
 
@@ -132,7 +132,7 @@ void UIInventory::Render(HDC hdc)
 		if (draggingSlot >= 0 && draggingSlot < inventory->GetSize())
 		{
 			info = GameData::GetSingleton()->GetItemInfo(item.idx);
-			info.img->Render(hdc, g_ptMouse.x, g_ptMouse.y, 2.0f, true);
+			info->img->Render(hdc, g_ptMouse.x, g_ptMouse.y, 2.0f, true);
 		}
 	}
 }

@@ -2,6 +2,7 @@
 #include "GameNode.h"
 #include "StageObject.h"
 #include "TerrainInfo.h"
+#include "GameData.h"
 #include <bitset>
 
 const POINT dirPoints[4] = { {1, 0}, {0, 1}, {-1, 0}, {0, -1} };
@@ -14,6 +15,7 @@ private:
 	Stage* parentStage;
 	Structure* structure;
 	TerrainType type;
+	int floorIdx;
 	POINT framePos;
 	bool isLand;
 	bool isFree;
@@ -30,6 +32,8 @@ public:
 	bool GetIsLand();
 	void SetIsFree(bool isLand);
 	bool GetIsFree();
+	inline void SetFloorIdx(int floorIdx) { this->floorIdx = floorIdx; }
+	inline int GetFloorIdx() { return floorIdx; }
 	void SetStage(Stage* parentStage);
 	Stage* GetStage();
 	void SetStructure(Structure* structure);

@@ -1,5 +1,11 @@
 #include "Camera.h"
 
+HRESULT Camera::InitSingleton()
+{
+	Init();
+	return S_OK;
+}
+
 HRESULT Camera::Init()
 {
 	pos = FPOINT{ 0, 0 };

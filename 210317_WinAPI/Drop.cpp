@@ -19,7 +19,8 @@ void Drop::Release()
 
 void Drop::Render(HDC hdc)
 {
-	Image* img = GameData::GetSingleton()->GetItemInfo(item.idx).img;
+	GameData* gameData = GameData::GetSingleton();
+	Image* img = gameData->GetItemInfo(item.idx)->img;
 	//Image::StageRectangle(hdc, GetBox());
 	img->StageRender(hdc, pos.x, pos.y, 0, 0, true, 0.5);
 }

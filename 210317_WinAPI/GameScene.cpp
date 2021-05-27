@@ -17,8 +17,6 @@ HRESULT GameScene::Init()
 {
 	SetClientRect(g_hWnd, GAMESCENESIZE_X, GAMESCENESIZE_Y);
 
-	GameData::GetSingleton()->InitItemInfo();
-
 	Camera* cam = Camera::GetSingleton();
 	cam->SetScreenSize(POINT{ GAMESCENESIZE_X , GAMESCENESIZE_Y });
 	cam->SetScale(1.5f);
@@ -154,6 +152,12 @@ void GameScene::Update()
 		}
 	}
 
+
+	if (KeyManager::GetSingleton()->IsStayKeyDown('Q'))
+	{
+		GameData::GetSingleton()->Save();
+	}
+
 	stage->Update();
 	player->Update();
 	CheckCollision();
@@ -224,18 +228,18 @@ void GameScene::CheckCollisionPlayerAndItem()
 
 void GameScene::CollisionPush(StageObject* movable, StageObject* immovable)
 {
-	RECT* resultRect = new RECT{ 0, 0, 0, 0 };
+	RECT resultRect = RECT{ 0, 0, 0, 0 };
 	FPOINT plPos = movable->GetPos();
-	RECT* plRect = &movable->GetBox();
-	RECT* tileRect = &immovable->GetBox();
+	RECT plRect = movable->GetBox();
+	RECT tileRect = immovable->GetBox();
 
-	if (IntersectRect(resultRect,
-		plRect,
-		tileRect))
+	if (IntersectRect(&resultRect,
+		&plRect,
+		&tileRect))
 	{
 		POINT resultSize = POINT{
-			resultRect->right - resultRect->left,
-			resultRect->bottom - resultRect->top
+			resultRect.right - resultRect.left,
+			resultRect.bottom - resultRect.top
 		};
 		if (resultSize.x < resultSize.y)
 		{
@@ -252,17 +256,15 @@ void GameScene::CollisionPush(StageObject* movable, StageObject* immovable)
 			movable->SetPos(FPOINT{ plPos.x, plPos.y + moveAmt });
 		}
 	}
-
-	SAFE_DELETE(resultRect);
 }
 
 bool GameScene::CheckIfColliding(StageObject* obj1, StageObject* obj2)
 {
 	RECT resultRect = RECT{ 0, 0, 0, 0 };
-	RECT* obj1Rect = &obj1->GetBox();
-	RECT* obj2Rect = &obj2->GetBox();
+	RECT obj1Rect = obj1->GetBox();
+	RECT obj2Rect = obj2->GetBox();
 
-	return (IntersectRect(&resultRect, obj1Rect, obj2Rect));
+	return (IntersectRect(&resultRect, &obj1Rect, &obj2Rect));
 }
 
 void GameScene::SetCamera()

@@ -1,5 +1,6 @@
 #include "Structure.h"
 #include "StructureInfo.h"
+#include "GameData.h"
 #include "Stage.h"
 #include "Image.h"
 
@@ -21,7 +22,7 @@ void Structure::Render(HDC hdc)
 {
 	RECT box = GetBox();
 	Image::StageRectangle(hdc, box);
-	GetStage()->GetStructureInfo(type)->GetImg()->
+	GameData::GetSingleton()->GetStructureInfo(type)->GetImg()->
 		StageRender(hdc, box.left, box.top, 0, 0, false, 1);
 	
 }

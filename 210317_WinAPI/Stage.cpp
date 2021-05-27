@@ -1,6 +1,6 @@
 #include "Stage.h"
-#include "TerrainInfo.h"
 #include "Structure.h"
+#include "GameData.h"
 #include "StructureInfo.h"
 
 HRESULT Stage::Init(POINT tileSize)
@@ -34,14 +34,6 @@ void Stage::Release()
     for (int i = 0; i < structures.size(); i++)
     {
         SAFE_RELEASE(structures[i]);
-    }
-    for (int i = 0; i < structureInfos.size(); i++)
-    {
-        SAFE_DELETE(structureInfos[i]);
-    }
-    for (int i = 0; i < terrainInfos.size(); i++)
-    {
-        SAFE_DELETE(terrainInfos[i]);
     }
 }
 
@@ -183,7 +175,7 @@ bool Stage::CanBuild(RECT region)
 bool Stage::BuildStructure(POINT tilePos, int typeIdx)
 {
     // 1. 건물 종류를 받아온다.
-    StructureInfo* tempInfo = GetStructureInfo(typeIdx);
+    StructureInfo* tempInfo = GameData::GetSingleton()->GetStructureInfo(typeIdx);
 
     // 2. 건물이 설치 가능한지 확인한다.
     POINT tileSize = tempInfo->GetTileSize();
@@ -248,33 +240,8 @@ void Stage::RefreshTileShapeAll()
 
 void Stage::InitInfo()
 {
-    for (int i = 0; i < (int)TerrainType::END; i++)
-    {
-        TerrainInfo* tempTerrainInfo = new TerrainInfo();
-        switch ((TerrainType)i)
-        {
-        case TerrainType::GRASS:
-            tempTerrainInfo->Init(i, "tile_grass");
-            break;
-        case TerrainType::DESERT:
-            tempTerrainInfo->Init(i, "tile_desert");
-            break;
-        case TerrainType::WINTER:
-            tempTerrainInfo->Init(i, "tile_winter");
-            break;
-        case TerrainType::GRAVEYARD:
-            tempTerrainInfo->Init(i, "tile_graveyard");
-            break;
-        case TerrainType::FIRE:
-            tempTerrainInfo->Init(i, "tile_fire");
-            break;
-        }
-        terrainInfos.push_back(tempTerrainInfo);
-    }
-    StructureInfo* tempStructureInfo = new StructureInfo();
-    tempStructureInfo->Init(0, "sampleBuilding", "sampleBuilding");
-    tempStructureInfo->SetTileSize(POINT{ 2, 2 });
-    structureInfos.push_back(tempStructureInfo);
+
+
 
     adjTileShape[0] = { 0,0 };
     adjTileShape[AdjDirs::R] = { 0,3 };
@@ -301,15 +268,7 @@ Terrain* Stage::GetTerrain(POINT TilePos)
     return &terrainTiles[TilePos.y][TilePos.x];
 }
 
-TerrainInfo* Stage::GetTerrainInfo(TerrainType i)
-{
-    return terrainInfos[(int)i];
-}
 
-StructureInfo* Stage::GetStructureInfo(int i)
-{
-    return structureInfos[i];
-}
 
 void Stage::ChangeTerrain(POINT posIdx, TerrainType type, bool isLand)
 {

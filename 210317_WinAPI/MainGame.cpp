@@ -4,6 +4,7 @@
 #include "GameScene.h"
 #include "AstarScene.h"
 #include "Camera.h"
+#include "GameData.h"
 
 HRESULT MainGame::Init()
 {
@@ -13,6 +14,7 @@ HRESULT MainGame::Init()
 	ImageManager::GetSingleton()->Init();
 	Camera::GetSingleton()->Init();
 	SceneManager::GetSingleton()->Init();
+	GameData::GetSingleton()->Init();
 
 	// 메인게임의 초기화 함수
 	//hTimer = (HANDLE)SetTimer(g_hWnd, 0, 1, NULL);
