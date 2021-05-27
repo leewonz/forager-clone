@@ -5,8 +5,10 @@ class Player :
     public StageObject
 {
 private:
-	const int BOX_SIZE_X = 16;
-	const int BOX_SIZE_Y = 16;
+	const int BOX_SIZE_X = 12;
+	const int BOX_SIZE_Y = 12;
+	const int IMG_OFFSET_X = 0;
+	const int IMG_OFFSET_Y = -4;
 
 	const float MOVE_SPEED = 100.0f;
 	const float MAX_FRAME_TIME = 0.1f;

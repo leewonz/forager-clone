@@ -14,7 +14,7 @@ class Terrain : public StageObject
 private:
 	Stage* parentStage;
 	Structure* structure;
-	TerrainType type;
+	TerrainType category;
 	int floorIdx;
 	POINT framePos;
 	bool isLand;
@@ -26,14 +26,14 @@ public:
 	virtual void Update();
 	virtual void Render(HDC hdc);
 
-	void SetTerrainType(TerrainType type);
+	void SetTerrainType(TerrainType category);
 	TerrainType GetTerrainType();
 	void SetIsLand(bool isLand);
 	bool GetIsLand();
 	void SetIsFree(bool isLand);
 	bool GetIsFree();
-	inline void SetFloorIdx(int floorIdx) { this->floorIdx = floorIdx; }
-	inline int GetFloorIdx() { return floorIdx; }
+	void SetFloorIdx(int floorIdx);
+	int GetFloorIdx();
 	void SetStage(Stage* parentStage);
 	Stage* GetStage();
 	void SetStructure(Structure* structure);

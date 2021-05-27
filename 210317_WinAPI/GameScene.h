@@ -20,12 +20,18 @@ private:
 	DropContainer* dropContainer;
 
 	FPOINT camPos;
+
+	float sceneTime;
+	float gameTime;
+	float lastResourceRegenTime;
 public:
 	virtual HRESULT Init();
 	virtual void Release();
 	virtual void Update();
 	virtual void Render(HDC hdc);
 
+	void InitTimes();
+	void UpdateTimes();
 	void CheckCollision();
 	void CheckCollisionPlayerAndItem();
 	void CollisionPush(StageObject* movable, StageObject* immovable);

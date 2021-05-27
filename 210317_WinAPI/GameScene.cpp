@@ -11,11 +11,15 @@
 #include "DropContainer.h"
 #include "Drop.h"
 #include "GameData.h"
+#include "StructureInfo.h"
+#include "config.h"
 #include "CommonFunction.h"
 
 HRESULT GameScene::Init()
 {
 	SetClientRect(g_hWnd, GAMESCENESIZE_X, GAMESCENESIZE_Y);
+
+	InitTimes();
 
 	Camera* cam = Camera::GetSingleton();
 	cam->SetScreenSize(POINT{ GAMESCENESIZE_X , GAMESCENESIZE_Y });
@@ -57,6 +61,8 @@ void GameScene::Update()
 	Camera* cam = Camera::GetSingleton();
 	FPOINT worldMouse = cam->CameraToWorld(toFpoint(g_ptMouse));
 
+	UpdateTimes();
+
 	if (KeyManager::GetSingleton()->IsStayKeyDown('Z'))
 	{
 		cam->SetScale(cam->GetScale() - 1.0f * TimerManager::GetSingleton()->GetElapsedTime());
@@ -89,7 +95,16 @@ void GameScene::Update()
 				stage->BuildStructure(selTile, 0);
 			}
 		}
+	}
 
+	if (KeyManager::GetSingleton()->IsOnceKeyDown(VK_RBUTTON))
+	{
+		POINT selTile = stage->PosToTile(worldMouse);
+		Terrain* selTerrain = stage->GetTerrain(selTile);
+		if (selTerrain->GetIsLand() == false)
+		{
+			selTerrain->SetFloorIdx(1);
+		}
 	}
 
 	if (KeyManager::GetSingleton()->IsOnceKeyUp(VK_LBUTTON))
@@ -169,10 +184,73 @@ void GameScene::Render(HDC hdc)
 	SetCamera();
 	PatBlt(hdc, 0, 0,
 		GAMESCENESIZE_X, GAMESCENESIZE_X, WHITENESS);
-	if (stage) { stage->Render(hdc); }
+	if (stage) 
+	{ 
+		stage->Render(hdc); 
+		for (int tileY = 0; tileY < Con::TILE_Y; tileY++)
+		{
+			stage->RenderLine(hdc, tileY);
+		}
+	}
 	if (player) { player->Render(hdc); }
 	if (uiInventory) { uiInventory->Render(hdc); }
 	if (dropContainer) { dropContainer->Render(hdc); }
+}
+
+void GameScene::InitTimes()
+{
+	sceneTime = 0;
+	gameTime = 0;
+	lastResourceRegenTime = gameTime;
+}
+
+void GameScene::UpdateTimes()
+{
+	sceneTime += TimerManager::GetSingleton()->GetElapsedTime();
+	gameTime += TimerManager::GetSingleton()->GetElapsedTime();
+
+	if (lastResourceRegenTime < gameTime + Con::REGEN_RESOURCE_INTERVAL)
+	{
+		lastResourceRegenTime += Con::REGEN_RESOURCE_INTERVAL;
+		for (int i = 0; i < Con::REGEN_RESOURCE_COUNT * 10; i++)
+		{
+			int randResourceNum = rand() % 4;
+			int randTileX = rand() % Con::TILE_X;
+			int randTileY = rand() % Con::TILE_Y;
+			int randResourceType;
+			switch (randResourceNum)
+			{
+			case 0:
+				randResourceType = GameData::GetSingleton()->
+					FindStructureInfo("structure_tree_grass");
+				break;
+			case 1:
+				randResourceType = GameData::GetSingleton()->
+					FindStructureInfo("structure_tree_fire");
+				break;
+			case 2:
+				randResourceType = GameData::GetSingleton()->
+					FindStructureInfo("structure_tree_snow");
+				break;
+			case 3:
+				randResourceType = GameData::GetSingleton()->
+					FindStructureInfo("structure_tree_desert");
+				break;
+			}
+			if (randResourceType != -1)
+			{
+				POINT randResourceSize = 
+					GameData::GetSingleton()->GetStructureInfo(randResourceType)->GetTileSize();
+
+				if (stage->CanBuild(RECT{
+					randTileX, randTileY - randResourceSize.y + 1,
+					randTileX + randResourceSize.x - 1, randTileY }))
+				{
+					stage->BuildStructure(POINT{ randTileX, randTileY }, randResourceType);
+				}
+			}
+		}
+	}
 }
 
 void GameScene::CheckCollision()
@@ -193,7 +271,7 @@ void GameScene::CheckCollision()
 			for (int x = plCheckRegion.left; x <= plCheckRegion.right; x++)
 			{
 				Terrain* currTerrain = stage->GetTerrain(POINT{ x, y });
-				if (!currTerrain->GetIsLand()) 
+				if (!currTerrain->GetIsFree()) 
 				{
 					CollisionPush(player, currTerrain);
 				}

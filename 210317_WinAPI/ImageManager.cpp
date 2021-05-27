@@ -27,8 +27,32 @@ HRESULT ImageManager::Init()
         "Image/tile_graveyard.bmp", 100, 80, 5, 4,
         false, RGB(255, 0, 255));
 
-    ImageManager::GetSingleton()->AddImage("sampleBuilding",
-        "Image/sampleBuilding.bmp", 30, 42, 
+    ImageManager::GetSingleton()->AddImage("structure_furnace",
+        "Image/structure/furnace.bmp", 30, 42, 
+        true, RGB(255, 0, 255));
+
+    ImageManager::GetSingleton()->AddImage("structure_forge",
+        "Image/structure/forge.bmp", 32, 32,
+        true, RGB(255, 0, 255));
+
+    ImageManager::GetSingleton()->AddImage("structure_sewingStation",
+        "Image/structure/sewingStation.bmp", 32, 48,
+        true, RGB(255, 0, 255));
+
+    ImageManager::GetSingleton()->AddImage("structure_tree_grass",
+        "Image/structure/tree_grass.bmp", 16, 48,
+        true, RGB(255, 0, 255));
+
+    ImageManager::GetSingleton()->AddImage("structure_tree_fire",
+        "Image/structure/tree_fire.bmp", 16, 48,
+        true, RGB(255, 0, 255));
+
+    ImageManager::GetSingleton()->AddImage("structure_tree_snow",
+        "Image/structure/tree_snow.bmp", 16, 48,
+        true, RGB(255, 0, 255));
+
+    ImageManager::GetSingleton()->AddImage("structure_tree_desert",
+        "Image/structure/tree_desert.bmp", 48, 48,
         true, RGB(255, 0, 255));
 
     ImageManager::GetSingleton()->AddImage("item_noneItem",
@@ -55,6 +79,9 @@ HRESULT ImageManager::Init()
         "Image/char_theForager.bmp", 48, 32, 4, 2,
         true, RGB(255, 0, 255));
     
+    ImageManager::GetSingleton()->AddImage("floor_bridge",
+        "Image/floor/bridge.bmp", 16, 16,
+        true, RGB(255, 0, 255));
 
     return S_OK;
 }

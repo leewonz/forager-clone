@@ -23,20 +23,27 @@ void Terrain::Render(HDC hdc)
 {
 	FPOINT startPoint = GetStartPoint();
 	//FPOINT camPos = Camera::GetSingleton()->WorldToCamera(FPOINT{ startPoint.x, startPoint.y });
-	//parentStage->GetTerrainInfo(type)->GetImg()->
+	//parentStage->GetTerrainInfo(category)->GetImg()->
 	//	FrameRender(hdc, camPos.x, camPos.y, framePos.x, framePos.y, false);
-	GameData::GetSingleton()->GetTerrainInfo(type)->GetImg()->
+	GameData::GetSingleton()->GetTerrainInfo(category)->GetImg()->
 		StageRender(hdc, startPoint.x, startPoint.y, framePos.x, framePos.y, false, 1);
+
+	FloorInfo* floorInfo = GameData::GetSingleton()->GetFloorInfo(floorIdx);
+	if (floorInfo->category != FloorCategory::NONE)
+	{
+		floorInfo->img->StageRender(
+			hdc, startPoint.x, startPoint.y, 0, 0, false, 1);
+	}
 }
 
-void Terrain::SetTerrainType(TerrainType type)
+void Terrain::SetTerrainType(TerrainType category)
 {
-	this->type = type;
+	this->category = category;
 }
 
 TerrainType Terrain::GetTerrainType()
 {
-	return type;
+	return category;
 }
 
 void Terrain::SetIsLand(bool isLand)
@@ -57,6 +64,26 @@ void Terrain::SetIsFree(bool isFree)
 bool Terrain::GetIsFree()
 {
 	return isFree;
+}
+
+void Terrain::SetFloorIdx(int floorIdx)
+{
+	this->floorIdx = floorIdx;
+	FloorInfo* myInfo = GameData::GetSingleton()->GetFloorInfo(floorIdx);
+	switch (myInfo->category)
+	{
+	case FloorCategory::NONE:
+		isFree = isLand;
+		break;
+	case FloorCategory::BRIDGE:
+		isFree = true;
+		break;
+	}
+}
+
+int Terrain::GetFloorIdx()
+{
+	return floorIdx;
 }
 
 void Terrain::SetStage(Stage* parentStage)

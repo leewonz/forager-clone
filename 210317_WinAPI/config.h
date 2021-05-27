@@ -22,7 +22,7 @@ namespace Con
 {
 	const int TILE_X = 20; //84
 	const int TILE_Y = 20; //84
-	const int TILESIZE = 20;
+	const int TILESIZE = 16; // 16
 
 	const float CAM_MOUSE_FOLLOW_SCALE = 0.1f;
 	const float CAM_SMOOTH_SPEED = 12.0f;
@@ -32,6 +32,9 @@ namespace Con
 	const int INVEN_VAULT_COUNT = 100;
 	const int INVEN_VAULT_X = 3;
 	const int INVEN_VAULT_Y = 3;
+
+	const float REGEN_RESOURCE_INTERVAL = 5.0f;
+	const int REGEN_RESOURCE_COUNT = 3;
 }
 // 샘플 타일 정보
 // 640 * 288

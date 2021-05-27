@@ -66,9 +66,22 @@ void Stage::Render(HDC hdc)
             terrainTiles[y][x].Render(hdc);
         }
     }
-    for (int i = 0; i < structures.size(); i++)
+    //for (int i = 0; i < structures.size(); i++)
+    //{
+    //    structures[i]->Render(hdc);
+    //}
+}
+
+void Stage::RenderLine(HDC hdc, int tileY)
+{
+    for (int x = 0; x < Con::TILE_X; x++)
     {
-        structures[i]->Render(hdc);
+        Structure* tileStructure = nullptr;
+        tileStructure = terrainTiles[tileY][x].GetStructure();
+        if (tileStructure)
+        {
+            tileStructure->Render(hdc);
+        }
     }
 }
 
@@ -270,10 +283,10 @@ Terrain* Stage::GetTerrain(POINT TilePos)
 
 
 
-void Stage::ChangeTerrain(POINT posIdx, TerrainType type, bool isLand)
+void Stage::ChangeTerrain(POINT posIdx, TerrainType category, bool isLand)
 {
     terrainTiles[posIdx.y][posIdx.x].SetIsLand(isLand);
-    terrainTiles[posIdx.y][posIdx.x].SetTerrainType(type);
+    terrainTiles[posIdx.y][posIdx.x].SetTerrainType(category);
     for (int y = posIdx.y - 1; y <= posIdx.y + 1; y++)
     {
         for (int x = posIdx.x - 1; x <= posIdx.x + 1; x++)

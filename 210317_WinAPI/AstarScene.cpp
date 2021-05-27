@@ -26,7 +26,7 @@ HRESULT AstarTile::Init(int idX, int idY)
 	costToGoal = 0.0f;
 	totalCost = 0.0f;
 
-	type = AstarTileType::None;
+	category = AstarTileType::None;
 
 	parentTile = nullptr;
 
@@ -53,7 +53,7 @@ void AstarTile::Render(HDC hdc)
 
 	SelectObject(hdc, hOldBrush);
 
-	if (type != AstarTileType::Wall)
+	if (category != AstarTileType::Wall)
 	{
 		// F, G, H Ãâ·Â
 		wsprintf(szText, "F : %d", totalCost);

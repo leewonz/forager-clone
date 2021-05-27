@@ -46,7 +46,7 @@ public:
 	inline bool GetIsFired() { return this->isFired; }
 
 	inline void SetTarget(Enemy* target) { this->target = target; }
-	inline void SetType(TYPE type) { this->missileType = type; }
+	inline void SetType(TYPE category) { this->missileType = category; }
 	inline void SetAngle(float angle) { this->angle = angle; }
 	inline void SetFireIndex(int fireIndex) { this->fireIndex = fireIndex; }
 

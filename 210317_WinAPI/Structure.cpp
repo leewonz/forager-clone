@@ -20,11 +20,13 @@ void Structure::Update()
 
 void Structure::Render(HDC hdc)
 {
+	StructureInfo* info = GameData::GetSingleton()->GetStructureInfo(type);
 	RECT box = GetBox();
+	POINT imgOffset = info->GetImgOffset();
+
 	Image::StageRectangle(hdc, box);
-	GameData::GetSingleton()->GetStructureInfo(type)->GetImg()->
-		StageRender(hdc, box.left, box.top, 0, 0, false, 1);
-	
+	info->GetImg()->
+		StageRender(hdc, box.left + imgOffset.x, box.top + imgOffset.y, 0, 0, false, 1);
 }
 
 void Structure::SetStage(Stage* parentStage)

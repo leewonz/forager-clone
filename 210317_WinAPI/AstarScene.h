@@ -12,7 +12,7 @@ private:
 	int idX, idY;
 	POINT center;
 	RECT rc;
-	AstarTileType type;
+	AstarTileType category;
 
 	int costFromStart;	// g : 시작점부터 현재 노드까지의 비용
 	int costToGoal;		// h : 현재 노드부터 목적지까지의 예상비용
@@ -40,8 +40,8 @@ public:
 	virtual void Render(HDC hdc);
 
 	void SetColor(COLORREF color);
-	void SetType(AstarTileType type) { this->type = type; }
-	AstarTileType GetType() { return this->type; }
+	void SetType(AstarTileType category) { this->category = category; }
+	AstarTileType GetType() { return this->category; }
 	int GetIdX() { return this->idX; }
 	int GetIdY() { return this->idY; }
 

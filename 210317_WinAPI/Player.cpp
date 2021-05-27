@@ -31,7 +31,7 @@ void Player::Render(HDC hdc)
 {
     FPOINT camPos = Camera::GetSingleton()->WorldToCamera(pos);
     //img->FrameRender(hdc, camPos.x, camPos.y, frameX, frameY, true);
-    img->StageRender(hdc, pos.x, pos.y, frameX, frameY, true);
+    img->StageRender(hdc, pos.x + IMG_OFFSET_X, pos.y + IMG_OFFSET_Y, frameX, frameY, true);
     //Rectangle(hdc, pos.x, pos.y, pos.x + 100, pos.y + 100);
 }
 
