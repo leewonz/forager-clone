@@ -40,3 +40,8 @@ float TimerManager::GetCurrTime()
 {
     return timer->GetCurrTime();
 }
+
+float TimerManager::GetProgramTime()
+{
+    return timer->GetProgramTime();
+}

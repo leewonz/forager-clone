@@ -36,13 +36,21 @@ HRESULT GameScene::Init()
 	inventoryContainer->Init();
 
 	dropContainer = new DropContainer();
-	dropContainer->Init();
+	dropContainer->Init(this);
 
 	uiInventory = new UIInventory();
 	uiInventory->Init(POINT{ Con::INVEN_PLAYER_X, Con::INVEN_PLAYER_Y });
 	uiInventory->SetInventory(inventoryContainer->GetPlayerInventory());
 
 	camPos = player->GetPos();
+
+	//for(int i = 0; i < 5000; i++)
+	//{
+	//	dropContainer->AddDrop(
+	//		Item{ (rand() % 4) + 1,1 },
+	//		FPOINT{ (float)(rand() % (Con::TILE_X * Con::TILESIZE)),
+	//				(float)(rand() % (Con::TILE_Y * Con::TILESIZE)) });
+	//}
 
 	return S_OK;
 }
@@ -63,19 +71,22 @@ void GameScene::Update()
 
 	UpdateTimes();
 
-	if (KeyManager::GetSingleton()->IsStayKeyDown('Z'))
+	if (KeyManager::GetSingleton()->IsStayKeyDown(VK_OEM_MINUS))
 	{
-		cam->SetScale(cam->GetScale() - 1.0f * TimerManager::GetSingleton()->GetElapsedTime());
+		cam->SetScale(cam->GetScale() - 2.0f * TimerManager::GetSingleton()->GetElapsedTime());
 	}
 
-	if (KeyManager::GetSingleton()->IsStayKeyDown('X'))
+	if (KeyManager::GetSingleton()->IsStayKeyDown(VK_OEM_PLUS))
 	{
-		cam->SetScale(cam->GetScale() + 1.0f * TimerManager::GetSingleton()->GetElapsedTime());
+		cam->SetScale(cam->GetScale() + 2.0f * TimerManager::GetSingleton()->GetElapsedTime());
 	}
 
 	if (KeyManager::GetSingleton()->IsStayKeyDown('C'))
 	{
-		dropContainer->AddDrop(Item{ (rand() % 4) + 1,1 }, FPOINT{ (float)(rand() % 1000), (float)(rand() % 1000) });
+		dropContainer->AddDrop(
+			Item{ (rand() % 4) + 1,1 },
+			FPOINT{ (float)(rand() % (Con::TILE_X * Con::TILESIZE)),
+					(float)(rand() % (Con::TILE_Y * Con::TILESIZE)) });
 	}
 
 	if (KeyManager::GetSingleton()->IsOnceKeyDown(VK_LBUTTON))
@@ -184,17 +195,33 @@ void GameScene::Render(HDC hdc)
 	SetCamera();
 	PatBlt(hdc, 0, 0,
 		GAMESCENESIZE_X, GAMESCENESIZE_X, WHITENESS);
-	if (stage) 
+	if (stage && dropContainer) 
 	{ 
+		map<float, Drop*>::iterator currDropIter;
+		map<float, Drop*>::iterator currDropIterEnd;
+
 		stage->Render(hdc); 
+
+		currDropIter = dropContainer->getMapBegin();
+		currDropIterEnd = dropContainer->getMapEnd();
 		for (int tileY = 0; tileY < Con::TILE_Y; tileY++)
 		{
+			if (player && stage->PosToTile(player->GetPos()).y == tileY)
+			{
+				player->Render(hdc);
+			}
+			while (currDropIter != currDropIterEnd &&
+				currDropIter->first / Con::TILESIZE < tileY)
+			{
+				currDropIter->second->Render(hdc);
+				++currDropIter;
+			}
 			stage->RenderLine(hdc, tileY);
 		}
 	}
-	if (player) { player->Render(hdc); }
+	//if (player) { player->Render(hdc); }
 	if (uiInventory) { uiInventory->Render(hdc); }
-	if (dropContainer) { dropContainer->Render(hdc); }
+	//if (dropContainer) { dropContainer->Render(hdc); }
 }
 
 void GameScene::InitTimes()
@@ -212,12 +239,12 @@ void GameScene::UpdateTimes()
 	if (lastResourceRegenTime < gameTime + Con::REGEN_RESOURCE_INTERVAL)
 	{
 		lastResourceRegenTime += Con::REGEN_RESOURCE_INTERVAL;
-		for (int i = 0; i < Con::REGEN_RESOURCE_COUNT * 10; i++)
+		for (int i = 0; i < Con::REGEN_RESOURCE_COUNT; i++)
 		{
 			int randResourceNum = rand() % 4;
 			int randTileX = rand() % Con::TILE_X;
 			int randTileY = rand() % Con::TILE_Y;
-			int randResourceType;
+			int randResourceType = -1;
 			switch (randResourceNum)
 			{
 			case 0:
@@ -295,9 +322,10 @@ void GameScene::CheckCollisionPlayerAndItem()
 			Drop* drop = dropContainer->GetDrop(i);
 			if (CheckIfColliding(player, (StageObject*)drop))
 			{
-				dropContainer->RemoveDrop(i);
 				inventoryContainer->GetPlayerInventory()->
 					AddItem(drop->GetItem());
+
+				dropContainer->RemoveDrop(i);
 			}
 		}
 

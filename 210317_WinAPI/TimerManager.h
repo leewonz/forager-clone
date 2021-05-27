@@ -17,5 +17,6 @@ public:
 
 	float GetElapsedTime();
 	float GetCurrTime();
+	float GetProgramTime();
 };
 

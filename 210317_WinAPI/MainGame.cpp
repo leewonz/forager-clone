@@ -66,6 +66,9 @@ void MainGame::Render()
 	wsprintf(szText, "X : %d, Y : %d", g_ptMouse.x, g_ptMouse.y);
 	//TextOut(hBackDC, 20, 20, szText, strlen(szText));
 	// FPS
+	// ½Ã°£
+	//wsprintf(szText, "TIME : %d", (int)(TimerManager::GetSingleton()->GetProgramTime()));
+	//TextOut(hBackDC, 20, 20, szText, strlen(szText));
 	TimerManager::GetSingleton()->Render(hBackDC);
 
 	backBuffer->Render(hdc);

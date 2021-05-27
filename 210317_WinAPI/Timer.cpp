@@ -7,9 +7,11 @@ HRESULT Timer::Init()
     timeElapsed = 0.0f;
     currTime = 0.0;
     lastTime = 0.0;
+    firstTime = 0.0;
     periodFrequency = 0.0;
     fpsTimeElapsed = 0.0f;
     fpsFrameCount = 0;
+    programTime = 0;
 
     if (QueryPerformanceFrequency((LARGE_INTEGER*)&periodFrequency))
     {
@@ -23,6 +25,7 @@ HRESULT Timer::Init()
         lastTime = timeGetTime();
         timeScale = 0.001f;
     }
+    firstTime = lastTime;
 
     return S_OK;
 }
@@ -53,6 +56,7 @@ void Timer::Tick()
     }
 
     lastTime = currTime;
+    programTime = (currTime - firstTime) * timeScale;
 }
 
 float Timer::GetCurrTime()

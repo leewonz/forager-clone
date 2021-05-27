@@ -2,11 +2,15 @@
 #include "config.h"
 #include "GameData.h"
 
+class GameNode;
 class Drop;
 class DropContainer
 {
 private:
+	GameNode* scene;
 	vector<Drop*> drops;
+	map<float, Drop*> mDrops;
+	map<float, Drop*>::iterator iterMDrops;
 public:
 
 	// Sort하는 법
@@ -15,13 +19,21 @@ public:
 	// 맵은 드로우하는 용도로만 사용한다.
 	// map의 iterator이용해서 sort된 순서대로 출력
 
-	HRESULT Init();
+	HRESULT Init(GameNode* scene);
 	void Update();
 	void Release();
 	void Render(HDC hdc);
 
-	inline int GetSize() { return drops.size(); }
+	inline GameNode* GetScene() { return scene; };
+	inline void SetScene(GameNode* scene) { this->scene = scene; };
+	inline int GetSize() { return drops.size(); };
 	inline Drop* GetDrop(int idx) { return drops[idx]; };
+	pair<float, Drop*> Begin();
+	pair<float, Drop*> Next();
+	pair<float, Drop*> Peek();
+	bool isEnded();
+	map<float, Drop*>::iterator getMapBegin() { return mDrops.begin(); }
+	map<float, Drop*>::iterator getMapEnd() { return mDrops.end(); }
 	void AddDrop(Item item, FPOINT pos);
 	void RemoveDrop(int idx);
 };
