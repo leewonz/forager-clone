@@ -3,9 +3,13 @@
 #include "CommonFunction.h"
 #include "Button.h"
 #include "Stage.h"
+#include "Camera.h"
 
 HRESULT TilemapTool::Init()
 {
+    Camera* cam = Camera::GetSingleton();
+    cam->SetScreenSize(POINT{ TILEMAPTOOLSIZE_X, TILEMAPTOOLSIZE_Y });
+
     SetClientRect(g_hWnd, TILEMAPTOOLSIZE_X, TILEMAPTOOLSIZE_Y);
 
     sampleTile = ImageManager::GetSingleton()->FindImage("sampleTile");
@@ -68,6 +72,9 @@ void TilemapTool::Release()
 
 void TilemapTool::Update()
 {
+    Camera* cam = Camera::GetSingleton();
+    FPOINT worldSpaceMouse = cam->CameraToWorld(toFpoint(g_ptMouse));
+    TimerManager* timerManager = TimerManager::GetSingleton();
     // 세이브 F1 F2 F3 ...
     //int stageNum = VK_F1;
     //int currInputKey;
@@ -89,24 +96,7 @@ void TilemapTool::Update()
     rcSample.right = TILEMAPTOOLSIZE_X;
     rcSample.bottom = sampleTile->GetHeight();
 
-    if (PtInRect(&rcMain, g_ptMouse))
-    {
-
-
-        // 마우스 왼쪽 버튼 클릭시 좌표 사용
-        if (KeyManager::GetSingleton()->IsOnceKeyDown(VK_LBUTTON)
-            || KeyManager::GetSingleton()->IsStayKeyDown(VK_LBUTTON))
-        {
-            POINT selMainTileIdx =
-                POINT{ g_ptMouse.x / Con::TILESIZE, g_ptMouse.y / Con::TILESIZE };
-
-            stage->ChangeTerrain(
-                selMainTileIdx,
-                (TerrainType)ptStartSelectedFrame.x,
-                ptStartSelectedFrame.y == 0 ? true : false);
-        }
-    }
-    else if (PtInRect(&rcSample, g_ptMouse))
+    if (PtInRect(&rcSample, g_ptMouse))
     {
         // 마우스 왼쪽 버튼 클릭시 좌표 사용
         if (KeyManager::GetSingleton()->IsOnceKeyDown(VK_LBUTTON))
@@ -149,10 +139,46 @@ void TilemapTool::Update()
             ptSelected[1] = g_ptMouse;
         }
     }
+    else if (PtInRect(&rcMain, toPoint(worldSpaceMouse)))
+    {
+        // 마우스 왼쪽 버튼 클릭시 좌표 사용
+        if (KeyManager::GetSingleton()->IsOnceKeyDown(VK_LBUTTON)
+            || KeyManager::GetSingleton()->IsStayKeyDown(VK_LBUTTON))
+        {
+            POINT selMainTileIdx =stage->PosToTile(worldSpaceMouse);
+
+            stage->ChangeTerrain(
+                selMainTileIdx,
+                (TerrainType)ptStartSelectedFrame.x,
+                ptStartSelectedFrame.y == 0 ? true : false);
+        }
+    }
+    
 
     if (KeyManager::GetSingleton()->IsOnceKeyDown('P'))
     {
         SceneManager::GetSingleton()->ChangeScene("전투_1");
+    }
+
+    if (KeyManager::GetSingleton()->IsStayKeyDown('W'))
+    {
+        FPOINT camCenter = cam->GetPosCenter();
+        cam->SetPosCenter(FPOINT{ camCenter.x, camCenter.y - (timerManager->GetElapsedTime() * 200.0f)});
+    }
+    if (KeyManager::GetSingleton()->IsStayKeyDown('A'))
+    {
+        FPOINT camCenter = cam->GetPosCenter();
+        cam->SetPosCenter(FPOINT{ camCenter.x - (timerManager->GetElapsedTime() * 200.0f), camCenter.y });
+    }
+    if (KeyManager::GetSingleton()->IsStayKeyDown('S'))
+    {
+        FPOINT camCenter = cam->GetPosCenter();
+        cam->SetPosCenter(FPOINT{ camCenter.x, camCenter.y + (timerManager->GetElapsedTime() * 200.0f) });
+    }
+    if (KeyManager::GetSingleton()->IsStayKeyDown('D'))
+    {
+        FPOINT camCenter = cam->GetPosCenter();
+        cam->SetPosCenter(FPOINT{ camCenter.x + (timerManager->GetElapsedTime() * 200.0f), camCenter.y });
     }
 
     return;

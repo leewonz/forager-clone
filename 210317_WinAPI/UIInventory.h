@@ -1,5 +1,6 @@
 #pragma once
 #include "UIObject.h"
+class Image;
 class Inventory;
 class UIInventory :
     public UIObject
@@ -11,14 +12,21 @@ private:
 		RECT box;
 	};
 
+	const POINT startPos = { 128, 196 };
+
     Inventory* inventory;
 	char szText[128] = "";
 
 	POINT slotGridCount = {0, 0};
 	vector<Slot> slots;
 
+	Image* inventorySlotImg;
+	Image* inventorySlotSelectionImg;
+	const int SLOT_IMG_OFFSET = -12;
+
 	bool isDragging = false;
 	int draggingSlot = -1;
+	int selectedSlot = 0;
 
 public:
 	HRESULT Init(POINT gridCount);
@@ -26,13 +34,10 @@ public:
 	inline void SetInventory(Inventory* inventory) { this->inventory = inventory; }
 	inline Inventory* GetInventory() { return inventory; }
 
-	// 선택된 리프 노드 반환. 선택된 게 없으면 nullptr 반환.
 	virtual pair<UI_MESSAGE, int> MouseDown(POINT mousePos);
-	// 선택된 리프 노드 반환. 선택된 게 없으면 nullptr 반환.
 	virtual pair<UI_MESSAGE, int> MouseUp(POINT mousePos);
-	// SetActive로 자신이 켜졌을 때 호출
+	virtual pair<UI_MESSAGE, int> Back();
 	virtual void OnActivate();
-	// SetActive로 자신이 꺼졌을 때 호출
 	virtual void OnDeactivate();
 
 	void Render(HDC hdc);

@@ -7,6 +7,7 @@ enum class UI_MESSAGE
 	NONE,
 	BLOCKED,
 	OK,
+	BACK,
 	END
 };
 
@@ -42,10 +43,12 @@ public:
 	inline void SetScene(Scene* scene) { this->scene = scene; }
 	inline Scene* GetScene() { return scene; }
 
-	// 선택된 리프 노드 반환. 선택된 게 없으면 nullptr 반환.
+	// 선택된 리프 노드의 메시지 반환. 선택된 게 없으면 {NONE, 0} 반환.
 	virtual pair<UI_MESSAGE, int> MouseDown(POINT mousePos) = 0;
-	// 선택된 리프 노드 반환. 선택된 게 없으면 nullptr 반환.
+	// 선택된 리프 노드의 메시지 반환. 선택된 게 없으면 {NONE, 0} 반환.
 	virtual pair<UI_MESSAGE, int> MouseUp(POINT mousePos) = 0;
+	// 선택된 리프 노드의 메시지 반환. 선택된 게 없으면 {NONE, 0} 반환.
+	virtual pair<UI_MESSAGE, int> Back() = 0;
 	// SetActive로 자신이 켜졌을 때 호출
 	virtual void OnActivate() = 0;
 	// SetActive로 자신이 꺼졌을 때 호출

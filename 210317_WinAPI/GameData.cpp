@@ -2,12 +2,16 @@
 #include "TerrainInfo.h"
 #include "StructureInfo.h"
 
+const Item GameData::EMPTY_ITEM = Item{ 0, 0 };
+
 HRESULT GameData::Init()
 {
 	InitItemInfo();
 	InitTileInfo();
 	InitStructureInfo();
 	InitFloorInfo();
+	InitConstructionRecipe();
+	InitCraftingRecipe();
 	return S_OK;
 }
 
@@ -79,6 +83,56 @@ void GameData::InitItemInfo()
 	info.name = "wood";
 	info.img = ImageManager::GetSingleton()->FindImage("item_" + info.codename);
 	itemInfos.push_back(info);
+
+	info.idx = 5;
+	info.category = ItemCategory::MATERIAL;
+	info.codename = "coal";
+	info.name = "coal";
+	info.img = ImageManager::GetSingleton()->FindImage("item_" + info.codename);
+	itemInfos.push_back(info);
+
+	info.idx = 6;
+	info.category = ItemCategory::MATERIAL;
+	info.codename = "ironOre";
+	info.name = "ironOre";
+	info.img = ImageManager::GetSingleton()->FindImage("item_" + info.codename);
+	itemInfos.push_back(info);
+	
+	info.idx = 7;
+	info.category = ItemCategory::MATERIAL;
+	info.codename = "goldOre";
+	info.name = "goldOre";
+	info.img = ImageManager::GetSingleton()->FindImage("item_" + info.codename);
+	itemInfos.push_back(info);
+	
+	info.idx = 8;
+	info.category = ItemCategory::MATERIAL;
+	info.codename = "ironIngot";
+	info.name = "ironIngot";
+	info.img = ImageManager::GetSingleton()->FindImage("item_" + info.codename);
+	itemInfos.push_back(info);
+	
+	info.idx = 9;
+	info.category = ItemCategory::MATERIAL;
+	info.codename = "goldIngot";
+	info.name = "goldIngot";
+	info.img = ImageManager::GetSingleton()->FindImage("item_" + info.codename);
+	itemInfos.push_back(info);
+	
+	info.idx = 10;
+	info.category = ItemCategory::COIN;
+	info.codename = "coin";
+	info.name = "coin";
+	info.img = ImageManager::GetSingleton()->FindImage("item_" + info.codename);
+	itemInfos.push_back(info);
+		
+	info.idx = 11;
+	info.category = ItemCategory::MATERIAL;
+	info.codename = "brick";
+	info.name = "brick";
+	info.img = ImageManager::GetSingleton()->FindImage("item_" + info.codename);
+	itemInfos.push_back(info);
+
 }
 
 void GameData::InitTileInfo()
@@ -113,46 +167,87 @@ void GameData::InitStructureInfo()
 	StructureInfo* tempStructureInfo;
 
 	tempStructureInfo = new StructureInfo();
-	tempStructureInfo->Init(0, "structure_furnace", "furnace");
+	tempStructureInfo->Init(0, "furnace", "furnace");
 	tempStructureInfo->SetTileSize(POINT{ 2, 2 });
-	tempStructureInfo->SetImgOffset(POINT{ 1, -10 });
+	tempStructureInfo->SetImgOffset(POINT{ 1, -12 });
+	tempStructureInfo->AddDrop(Item{ FindItemInfo("stone"), 10 });
 	structureInfos.push_back(tempStructureInfo);
 
 	tempStructureInfo = new StructureInfo();
-	tempStructureInfo->Init(1, "structure_forge", "forge");
+	tempStructureInfo->Init(1, "forge", "forge");
 	tempStructureInfo->SetTileSize(POINT{ 2, 2 });
 	tempStructureInfo->SetImgOffset(POINT{ 0, -4 });
+	tempStructureInfo->AddDrop(Item{ FindItemInfo("brick"), 4 });
+	tempStructureInfo->AddDrop(Item{ FindItemInfo("ironOre"), 4 });
 	structureInfos.push_back(tempStructureInfo);
 
 	tempStructureInfo = new StructureInfo();
-	tempStructureInfo->Init(2, "structure_sewingStation", "sewingStation");
+	tempStructureInfo->Init(2, "sewingStation", "sewingStation");
 	tempStructureInfo->SetTileSize(POINT{ 2, 2 });
-	tempStructureInfo->SetImgOffset(POINT{ 0, -16 });
+	tempStructureInfo->SetImgOffset(POINT{ 0, -18 });
+	tempStructureInfo->AddDrop(Item{ FindItemInfo("wood"), 10 });
+	tempStructureInfo->AddDrop(Item{ FindItemInfo("brick"), 4 });
 	structureInfos.push_back(tempStructureInfo);
 
 	tempStructureInfo = new StructureInfo();
-	tempStructureInfo->Init(3, "structure_tree_grass", "tree_grass");
+	tempStructureInfo->Init(3, "tree_grass", "tree_grass");
 	tempStructureInfo->SetTileSize(POINT{ 1, 1 });
 	tempStructureInfo->SetImgOffset(POINT{ 0, -32 });
+	tempStructureInfo->AddDrop(Item{ FindItemInfo("wood"), 2 });
 	structureInfos.push_back(tempStructureInfo);
 
 	tempStructureInfo = new StructureInfo();
-	tempStructureInfo->Init(3, "structure_tree_fire", "tree_fire");
+	tempStructureInfo->Init(4, "tree_fire", "tree_fire");
 	tempStructureInfo->SetTileSize(POINT{ 1, 1 });
 	tempStructureInfo->SetImgOffset(POINT{ 0, -32 });
+	tempStructureInfo->AddDrop(Item{ FindItemInfo("wood"), 2 });
 	structureInfos.push_back(tempStructureInfo);
 
 	tempStructureInfo = new StructureInfo();
-	tempStructureInfo->Init(3, "structure_tree_snow", "tree_snow");
+	tempStructureInfo->Init(5, "tree_snow", "tree_snow");
 	tempStructureInfo->SetTileSize(POINT{ 1, 1 });
 	tempStructureInfo->SetImgOffset(POINT{ 0, -32 });
+	tempStructureInfo->AddDrop(Item{ FindItemInfo("wood"), 2 });
 	structureInfos.push_back(tempStructureInfo);
 
 	tempStructureInfo = new StructureInfo();
-	tempStructureInfo->Init(3, "structure_tree_desert", "tree_desert");
+	tempStructureInfo->Init(6, "tree_desert", "tree_desert");
 	tempStructureInfo->SetTileSize(POINT{ 1, 1 });
 	tempStructureInfo->SetImgOffset(POINT{ -16, -32 });
+	tempStructureInfo->AddDrop(Item{ FindItemInfo("wood"), 2 });
 	structureInfos.push_back(tempStructureInfo);
+
+	tempStructureInfo = new StructureInfo();
+	tempStructureInfo->Init(7, "stone", "stone");
+	tempStructureInfo->SetTileSize(POINT{ 1, 1 });
+	tempStructureInfo->SetImgOffset(POINT{ 0, -1 });
+	tempStructureInfo->AddDrop(Item{ FindItemInfo("stone"), 3 });
+	structureInfos.push_back(tempStructureInfo);
+	
+	tempStructureInfo = new StructureInfo();
+	tempStructureInfo->Init(8, "coal", "coal");
+	tempStructureInfo->SetTileSize(POINT{ 1, 1 });
+	tempStructureInfo->SetImgOffset(POINT{ 0, -1 });
+	tempStructureInfo->AddDrop(Item{ FindItemInfo("stone"), 1 });
+	tempStructureInfo->AddDrop(Item{ FindItemInfo("coal"), 2 });
+	structureInfos.push_back(tempStructureInfo);
+	
+	tempStructureInfo = new StructureInfo();
+	tempStructureInfo->Init(9, "iron", "iron");
+	tempStructureInfo->SetTileSize(POINT{ 1, 1 });
+	tempStructureInfo->SetImgOffset(POINT{ 0, -1 });
+	tempStructureInfo->AddDrop(Item{ FindItemInfo("stone"), 1 });
+	tempStructureInfo->AddDrop(Item{ FindItemInfo("ironOre"), 2 });
+	structureInfos.push_back(tempStructureInfo);
+	
+	tempStructureInfo = new StructureInfo();
+	tempStructureInfo->Init(10, "gold", "gold");
+	tempStructureInfo->SetTileSize(POINT{ 1, 1 });
+	tempStructureInfo->SetImgOffset(POINT{ 0, -1 });
+	tempStructureInfo->AddDrop(Item{ FindItemInfo("stone"), 1 });
+	tempStructureInfo->AddDrop(Item{ FindItemInfo("goldOre"), 2 });
+	structureInfos.push_back(tempStructureInfo);
+
 }
 
 void GameData::InitFloorInfo()
@@ -172,6 +267,116 @@ void GameData::InitFloorInfo()
 	tempFloorInfo.category = FloorCategory::BRIDGE;
 	tempFloorInfo.img = ImageManager::GetSingleton()->FindImage("floor_" + tempFloorInfo.codename);
 	floorInfos.push_back(tempFloorInfo);
+}
+
+void GameData::InitConstructionRecipe()
+{
+	ConstructionRecipe tempConstructionRecipe;
+	string tempCodename;
+
+	tempConstructionRecipe = ConstructionRecipe();
+	tempCodename = "furnace";
+	tempConstructionRecipe.idx = 0;
+	tempConstructionRecipe.constructionCategory = ConstructionCategory::STRUCTURE;
+	tempConstructionRecipe.constructionIdx = FindStructureInfo(tempCodename);
+	tempConstructionRecipe.iconImg = ImageManager::GetSingleton()->FindImage("ui_icon_" + tempCodename);
+	tempConstructionRecipe.materials[0] = Item{ FindItemInfo("stone"), 10 };
+	tempConstructionRecipe.materials[1] = Item{ FindItemInfo("item_none"), 0};
+	tempConstructionRecipe.materials[2] = Item{ FindItemInfo("item_none"), 0 };
+	tempConstructionRecipe.materials[3] = Item{ FindItemInfo("item_none"), 0 };
+	constructionRecipes.push_back(tempConstructionRecipe);
+
+	tempConstructionRecipe = ConstructionRecipe();
+	tempCodename = "forge";
+	tempConstructionRecipe.idx = 1;
+	tempConstructionRecipe.constructionCategory = ConstructionCategory::STRUCTURE;
+	tempConstructionRecipe.constructionIdx = FindStructureInfo(tempCodename);
+	tempConstructionRecipe.iconImg = ImageManager::GetSingleton()->FindImage("ui_icon_" + tempCodename);
+	tempConstructionRecipe.materials[0] = Item{ FindItemInfo("brick"), 4 };
+	tempConstructionRecipe.materials[1] = Item{ FindItemInfo("ironIngot"), 4 };
+	tempConstructionRecipe.materials[2] = Item{ FindItemInfo("item_none"), 0 };
+	tempConstructionRecipe.materials[3] = Item{ FindItemInfo("item_none"), 0 };
+	constructionRecipes.push_back(tempConstructionRecipe);
+
+	tempConstructionRecipe = ConstructionRecipe();
+	tempCodename = "bridge";
+	tempConstructionRecipe.idx = 2;
+	tempConstructionRecipe.constructionCategory = ConstructionCategory::FLOOR;
+	tempConstructionRecipe.constructionIdx = FindFloorInfo(tempCodename);
+	tempConstructionRecipe.iconImg = ImageManager::GetSingleton()->FindImage("ui_icon_" + tempCodename);
+	tempConstructionRecipe.materials[0] = Item{ FindItemInfo("wood"), 4 };
+	tempConstructionRecipe.materials[1] = Item{ FindItemInfo("item_none"), 0 };
+	tempConstructionRecipe.materials[2] = Item{ FindItemInfo("item_none"), 0 };
+	tempConstructionRecipe.materials[3] = Item{ FindItemInfo("item_none"), 0 };
+	constructionRecipes.push_back(tempConstructionRecipe);
+}
+
+void GameData::InitCraftingRecipe()
+{
+	// coal brick ironIngot goldIngot coin
+
+	//int idx;
+	//int resultItemIdx;
+	//int structureIdx;
+	//Item materials[Con::CRAFTING_MATERIAL_MAX];
+	//float craftingTime;
+
+	CraftingRecipe tempCraftingRecipe;
+
+	tempCraftingRecipe = CraftingRecipe();
+	tempCraftingRecipe.idx = 0;
+	tempCraftingRecipe.resultItemIdx = FindItemInfo("coal");
+	tempCraftingRecipe.structureIdx = FindStructureInfo("furnace");
+	tempCraftingRecipe.materials[0] = Item{FindItemInfo("wood"), 2};
+	tempCraftingRecipe.materials[1] = EMPTY_ITEM;
+	tempCraftingRecipe.materials[2] = EMPTY_ITEM;
+	tempCraftingRecipe.materials[3] = EMPTY_ITEM;
+	tempCraftingRecipe.craftingTime = 2.0f;
+	craftingRecipes.push_back(tempCraftingRecipe);
+
+	tempCraftingRecipe = CraftingRecipe();
+	tempCraftingRecipe.idx = 1;
+	tempCraftingRecipe.resultItemIdx = FindItemInfo("brick");
+	tempCraftingRecipe.structureIdx = FindStructureInfo("furnace");
+	tempCraftingRecipe.materials[0] = Item{ FindItemInfo("stone"), 2 };
+	tempCraftingRecipe.materials[1] = Item{ FindItemInfo("coal"), 1 };
+	tempCraftingRecipe.materials[2] = EMPTY_ITEM;
+	tempCraftingRecipe.materials[3] = EMPTY_ITEM;
+	tempCraftingRecipe.craftingTime = 2.0f;
+	craftingRecipes.push_back(tempCraftingRecipe);
+
+	tempCraftingRecipe = CraftingRecipe();
+	tempCraftingRecipe.idx = 2;
+	tempCraftingRecipe.resultItemIdx = FindItemInfo("ironIngot");
+	tempCraftingRecipe.structureIdx = FindStructureInfo("furnace");
+	tempCraftingRecipe.materials[0] = Item{ FindItemInfo("ironOre"), 2 };
+	tempCraftingRecipe.materials[1] = Item{ FindItemInfo("coal"), 1 };
+	tempCraftingRecipe.materials[2] = EMPTY_ITEM;
+	tempCraftingRecipe.materials[3] = EMPTY_ITEM;
+	tempCraftingRecipe.craftingTime = 2.0f;
+	craftingRecipes.push_back(tempCraftingRecipe);
+
+	tempCraftingRecipe = CraftingRecipe();
+	tempCraftingRecipe.idx = 3;
+	tempCraftingRecipe.resultItemIdx = FindItemInfo("goldIngot");
+	tempCraftingRecipe.structureIdx = FindStructureInfo("furnace");
+	tempCraftingRecipe.materials[0] = Item{ FindItemInfo("goldOre"), 2 };
+	tempCraftingRecipe.materials[1] = Item{ FindItemInfo("coal"), 1 };
+	tempCraftingRecipe.materials[2] = EMPTY_ITEM;
+	tempCraftingRecipe.materials[3] = EMPTY_ITEM;
+	tempCraftingRecipe.craftingTime = 2.0f;
+	craftingRecipes.push_back(tempCraftingRecipe);
+
+	tempCraftingRecipe = CraftingRecipe();
+	tempCraftingRecipe.idx = 4;
+	tempCraftingRecipe.resultItemIdx = FindItemInfo("coin");
+	tempCraftingRecipe.structureIdx = FindStructureInfo("forge");
+	tempCraftingRecipe.materials[0] = Item{ FindItemInfo("goldIngot"), 2 };
+	tempCraftingRecipe.materials[1] = EMPTY_ITEM;
+	tempCraftingRecipe.materials[2] = EMPTY_ITEM;
+	tempCraftingRecipe.materials[3] = EMPTY_ITEM;
+	tempCraftingRecipe.craftingTime = 2.0f;
+	craftingRecipes.push_back(tempCraftingRecipe);
 }
 
 int GameData::FindItemInfo(string codeName)
@@ -199,6 +404,19 @@ int GameData::FindFloorInfo(string codeName)
 		if (floorInfos[i].codename == codeName) { return i; }
 	}
 	return -1;
+}
+
+vector<CraftingRecipe*> GameData::GetStructureCraftingRecipes(int structureIdx)
+{
+	vector<CraftingRecipe*> result;
+	for (int i = 0; i < craftingRecipes.size(); i++)
+	{
+		if (craftingRecipes[i].structureIdx == structureIdx)
+		{
+			result.push_back(&craftingRecipes[i]);
+		}
+	}
+	return result;
 }
 
 void GameData::Save()

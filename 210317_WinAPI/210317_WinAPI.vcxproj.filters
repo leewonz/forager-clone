@@ -150,6 +150,12 @@
     <ClCompile Include="Drop.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="UIConstruction.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="UICrafting.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CommonFunction.h">
@@ -258,6 +264,12 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Drop.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="UIConstruction.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="UICrafting.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

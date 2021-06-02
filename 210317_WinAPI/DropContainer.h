@@ -9,8 +9,8 @@ class DropContainer
 private:
 	GameNode* scene;
 	vector<Drop*> drops;
-	map<float, Drop*> mDrops;
-	map<float, Drop*>::iterator iterMDrops;
+	multimap<float, Drop*> mDrops;
+	multimap<float, Drop*>::iterator iterMDrops;
 public:
 
 	// SortÇÏ´Â ¹ý
@@ -32,8 +32,8 @@ public:
 	pair<float, Drop*> Next();
 	pair<float, Drop*> Peek();
 	bool isEnded();
-	map<float, Drop*>::iterator getMapBegin() { return mDrops.begin(); }
-	map<float, Drop*>::iterator getMapEnd() { return mDrops.end(); }
+	multimap<float, Drop*>::iterator getMapBegin() { return mDrops.begin(); }
+	multimap<float, Drop*>::iterator getMapEnd() { return mDrops.end(); }
 	void AddDrop(Item item, FPOINT pos);
 	void RemoveDrop(int idx);
 };

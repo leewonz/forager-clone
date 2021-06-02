@@ -63,6 +63,17 @@ public:
 					 rc.right / Con::TILESIZE, rc.bottom / Con::TILESIZE };
 	};
 
+	inline RECT CenterPosToTile(FPOINT pos, POINT tileSize)
+	{
+		RECT worldRect = RECT{
+			(LONG)(pos.x - (0.5f * (tileSize.x - 1))),
+			(LONG)(pos.y - (0.5f * (tileSize.y - 1))),
+			(LONG)(pos.x + (0.5f * (tileSize.x - 1))),
+			(LONG)(pos.y + (0.5f * (tileSize.y - 1)))
+		};
+		return PosToTile(worldRect);
+	};
+
 	inline bool IsInStage(POINT tilePos)
 	{
 		return (tilePos.y >= 0 && tilePos.y < Con::TILE_Y &&
@@ -78,11 +89,15 @@ public:
 		{
 			return adjTileShapeWater[(code & AdjDirs::U) ? 1 : 0];
 		}
-		
 	}
+
+	inline Structure* GetStructure(int idx) { return structures[idx]; }
+	inline int GetStructureCount() { return structures.size(); }
 
 	bool CanBuild(RECT region);
 	bool BuildStructure(POINT tilePos, int typeIdx);
+	bool DestroyStructure(Structure* structure);
+	Structure* GetStructureAtPoint(FPOINT point);
 	void RefreshTileShapeAll();
 
 	Terrain* GetTerrain(POINT TilePos);

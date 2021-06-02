@@ -8,14 +8,21 @@ class StageObject;
 class Image;
 class Player;
 class UIInventory;
+class UIConstruction;
+class UIContainer;
+class UICrafting;
 class InventoryContainer;
 class DropContainer;
+class Structure;
 class GameScene : public GameNode
 {
 private:
 	Stage* stage;
 	Player* player;
 	UIInventory* uiInventory;
+	UIConstruction* uiConstruction;
+	UIContainer* uiContainer;
+	UICrafting* uiCrafting;
 	InventoryContainer* inventoryContainer;
 	DropContainer* dropContainer;
 
@@ -37,6 +44,10 @@ public:
 	void CollisionPush(StageObject* movable, StageObject* immovable);
 	bool CheckIfColliding(StageObject* obj1, StageObject* obj2);
 	void SetCamera();
+	void SpawnDrop(Structure* structure);
+	float GetGameTime();
+	float GetSceneTime();
+	void UpdateCrafting();
 
 	virtual ~GameScene() {};
 };

@@ -29,7 +29,7 @@ void DropContainer::Render(HDC hdc)
     //{
     //    drops[i]->Render(hdc);
     //}
-    map<float, Drop*>::iterator iter;
+    multimap<float, Drop*>::iterator iter;
     for (iter = mDrops.begin(); iter != mDrops.end(); iter++)
     {
         iter->second->Render(hdc);
@@ -56,7 +56,7 @@ pair<float, Drop*> DropContainer::Peek()
     }
     else
     {
-        return pair<float, Drop*>{ -1, nullptr };
+        return pair<float, Drop*>{ -1.0f, nullptr };
     }
 }
 
@@ -68,10 +68,16 @@ bool DropContainer::isEnded()
 void DropContainer::AddDrop(Item item, FPOINT pos)
 {
     Drop* drop = new Drop();
+    FPOINT RandomItemPos = FPOINT{
+        pos.x + (float)((rand() % 15) - 7),
+        pos.y + (float)((rand() % 15) - 7),
+    };
+
     drop->Init();
-    drop->SetPos(pos);
     drop->SetItem(item);
     drop->SetScene(scene);
+    drop->SetAnimationStartPos(pos);
+    drop->SetPos(RandomItemPos);
     drops.push_back(drop);
     mDrops.insert({ pos.y, drop });
 }
@@ -79,7 +85,7 @@ void DropContainer::AddDrop(Item item, FPOINT pos)
 void DropContainer::RemoveDrop(int idx)
 {
     vector<Drop*>::iterator vIter;
-    map<float, Drop*>::iterator mapIter;
+    multimap<float, Drop*>::iterator mapIter;
 
     vIter = drops.begin() + idx;
     Drop* willErase = *vIter;

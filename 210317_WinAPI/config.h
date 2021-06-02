@@ -20,22 +20,35 @@ using namespace std;
 
 namespace Con
 {
-	const int TILE_X = 20; //84
-	const int TILE_Y = 20; //84
+	const int TILE_X = 84; //84
+	const int TILE_Y = 84; //84
 	const int TILESIZE = 16; // 16
+	const int REGION_X = 12;
+	const int REGION_Y = 12;
 
-	const float CAM_MOUSE_FOLLOW_SCALE = 0.1f;
+	const float CAM_MOUSE_FOLLOW_SCALE = 0.15f;
 	const float CAM_SMOOTH_SPEED = 12.0f;
 
 	const int INVEN_PLAYER_X = 8;
 	const int INVEN_PLAYER_Y = 5;
+	const int INVEN_EQUIP_X = 6;
+	const int INVEN_EQUIP_Y = 1;
 	const int INVEN_VAULT_COUNT = 100;
 	const int INVEN_VAULT_X = 3;
 	const int INVEN_VAULT_Y = 3;
 
-	const float REGEN_RESOURCE_INTERVAL = 5.0f;
-	const int REGEN_RESOURCE_COUNT = 3;
+	const float REGEN_RESOURCE_INTERVAL = 0.5f;
+	const int REGEN_RESOURCE_COUNT = 5;
+
+	const int STRUCTURE_GAP = 6;
+
+	const int CONSTRUCTION_MATERIAL_MAX = 4;
+	const int RESOURCE_DROP_MAX = 4;
+	const int CRAFTING_MATERIAL_MAX = 4;
 }
+
+#define DEBUG_DRAW 0; 
+
 // 샘플 타일 정보
 // 640 * 288
 #define SAMPLE_TILE_X	20
@@ -48,10 +61,10 @@ namespace Con
 
 #define WINSIZE_X	1080
 #define WINSIZE_Y	720
-#define TILEMAPTOOLSIZE_X	1024
-#define TILEMAPTOOLSIZE_Y	900
-#define GAMESCENESIZE_X		1080
-#define GAMESCENESIZE_Y		720
+#define TILEMAPTOOLSIZE_X	1280
+#define TILEMAPTOOLSIZE_Y	800
+#define GAMESCENESIZE_X		1280
+#define GAMESCENESIZE_Y		800
 #define ASTARSIZE_X	1620
 #define ASTARSIZE_Y	900
 

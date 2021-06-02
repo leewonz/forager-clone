@@ -1,8 +1,13 @@
 #pragma once
 #include "config.h"
+#include "Camera.h"
 
+class Camera;
 class Image
 {
+private:
+	static Camera* cam;
+	static CameraStatus camStatus;
 public:
 	enum IMAGE_LOAD_KIND
 	{
@@ -119,6 +124,7 @@ public:
 	}
 
 	static void StageRectangle(HDC hdc, RECT rect);
-
+	static void SetCamera(Camera* cam) { Image::cam = cam; }
+	static void SetCameraStatus(Camera* cam) { Image::camStatus = cam->GetStatus(); }
 };
 

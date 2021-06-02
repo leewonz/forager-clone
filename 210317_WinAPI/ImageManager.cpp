@@ -4,27 +4,27 @@
 HRESULT ImageManager::Init()
 {
     ImageManager::GetSingleton()->AddImage("sampleTile",
-        "Image/sampleTile.bmp", 100, 40, 5, 2,
+        "Image/sampleTile.bmp", 80, 32, 5, 2,
         false, RGB(255, 0, 255));
 
     ImageManager::GetSingleton()->AddImage("tile_grass",
-        "Image/tile_grass.bmp", 100, 80, 5, 4,
+        "Image/tile/tile_grass.bmp", 80, 64, 5, 4,
         false, RGB(255, 0, 255));
 
     ImageManager::GetSingleton()->AddImage("tile_desert",
-        "Image/tile_desert.bmp", 100, 80, 5, 4,
+        "Image/tile/tile_desert.bmp", 80, 64, 5, 4,
         false, RGB(255, 0, 255));
 
     ImageManager::GetSingleton()->AddImage("tile_winter",
-        "Image/tile_winter.bmp", 100, 80, 5, 4,
+        "Image/tile/tile_winter.bmp", 80, 64, 5, 4,
         false, RGB(255, 0, 255));
 
     ImageManager::GetSingleton()->AddImage("tile_fire",
-        "Image/tile_fire.bmp", 100, 80, 5, 4,
+        "Image/tile/tile_fire.bmp", 80, 64, 5, 4,
         false, RGB(255, 0, 255));
 
     ImageManager::GetSingleton()->AddImage("tile_graveyard",
-        "Image/tile_graveyard.bmp", 100, 80, 5, 4,
+        "Image/tile/tile_graveyard.bmp", 80, 64, 5, 4,
         false, RGB(255, 0, 255));
 
     ImageManager::GetSingleton()->AddImage("structure_furnace",
@@ -55,6 +55,22 @@ HRESULT ImageManager::Init()
         "Image/structure/tree_desert.bmp", 48, 48,
         true, RGB(255, 0, 255));
 
+    ImageManager::GetSingleton()->AddImage("structure_stone",
+        "Image/structure/stone.bmp", 32, 17, 2, 1,
+        true, RGB(255, 0, 255));
+
+    ImageManager::GetSingleton()->AddImage("structure_coal",
+        "Image/structure/coal.bmp", 32, 17, 2, 1,
+        true, RGB(255, 0, 255));
+
+    ImageManager::GetSingleton()->AddImage("structure_iron",
+        "Image/structure/iron.bmp", 32, 17, 2, 1,
+        true, RGB(255, 0, 255));
+
+    ImageManager::GetSingleton()->AddImage("structure_gold",
+        "Image/structure/gold.bmp", 32, 17, 2, 1,
+        true, RGB(255, 0, 255));
+
     ImageManager::GetSingleton()->AddImage("item_noneItem",
         "Image/item/noneItem.bmp", 32, 32,
         true, RGB(255, 0, 255));
@@ -75,12 +91,92 @@ HRESULT ImageManager::Init()
         "Image/item/wood.bmp", 32, 32,
         true, RGB(255, 0, 255));
 
-    ImageManager::GetSingleton()->AddImage("char_theForager",
-        "Image/char_theForager.bmp", 48, 32, 4, 2,
+    ImageManager::GetSingleton()->AddImage("item_coal",
+        "Image/item/coal.bmp", 32, 32,
+        true, RGB(255, 0, 255));
+    
+    ImageManager::GetSingleton()->AddImage("item_ironOre",
+        "Image/item/ironOre.bmp", 32, 32,
+        true, RGB(255, 0, 255));
+    
+    ImageManager::GetSingleton()->AddImage("item_goldOre",
+        "Image/item/goldOre.bmp", 32, 32,
+        true, RGB(255, 0, 255));
+    
+    ImageManager::GetSingleton()->AddImage("item_ironIngot",
+        "Image/item/ironIngot.bmp", 32, 32,
+        true, RGB(255, 0, 255));
+        
+    ImageManager::GetSingleton()->AddImage("item_goldIngot",
+        "Image/item/goldIngot.bmp", 32, 32,
+        true, RGB(255, 0, 255));
+        
+    ImageManager::GetSingleton()->AddImage("item_coin",
+        "Image/item/coin.bmp", 32, 32,
+        true, RGB(255, 0, 255));
+
+    ImageManager::GetSingleton()->AddImage("item_brick",
+        "Image/item/brick.bmp", 32, 32,
+        true, RGB(255, 0, 255));
+
+    ImageManager::GetSingleton()->AddImage("char_theForager_l",
+        "Image/char_theForager_l.bmp", 48, 32, 4, 2,
+        true, RGB(255, 0, 255));
+
+    ImageManager::GetSingleton()->AddImage("char_theForager_r",
+        "Image/char_theForager_r.bmp", 48, 32, 4, 2,
         true, RGB(255, 0, 255));
     
     ImageManager::GetSingleton()->AddImage("floor_bridge",
         "Image/floor/bridge.bmp", 16, 16,
+        true, RGB(255, 0, 255));
+
+    ImageManager::GetSingleton()->AddImage("ui_inventorySlot",
+        "Image/ui/inventorySlot.bmp", 22, 22,
+        true, RGB(255, 0, 255));
+
+    ImageManager::GetSingleton()->AddImage("ui_inventorySlotSelection",
+        "Image/ui/inventorySlotSelection.bmp", 860, 90, 10, 1,
+        true, RGB(255, 0, 255));
+
+    ImageManager::GetSingleton()->AddImage("ui_icon_furnace",
+        "Image/ui/iconFurnace.bmp", 31, 42,
+        true, RGB(255, 0, 255));
+
+    ImageManager::GetSingleton()->AddImage("ui_icon_forge",
+        "Image/ui/iconForge.bmp", 29, 29,
+        true, RGB(255, 0, 255));
+
+    ImageManager::GetSingleton()->AddImage("ui_icon_bridge",
+        "Image/ui/iconBridge.bmp", 34, 32,
+        true, RGB(255, 0, 255));
+
+    ImageManager::GetSingleton()->AddImage("ui_button",
+        "Image/ui/button.bmp", 93, 33,
+        true, RGB(255, 0, 255));
+
+    ImageManager::GetSingleton()->AddImage("ui_menuTab3",
+        "Image/ui/menuTab3.bmp", 138, 48,
+        true, RGB(255, 0, 255));
+
+    ImageManager::GetSingleton()->AddImage("ui_textBox",
+        "Image/ui/textBox.bmp", 220, 400,
+        true, RGB(255, 0, 255));
+
+    ImageManager::GetSingleton()->AddImage("ui_textBoxShort",
+        "Image/ui/textBoxShort.bmp", 220, 200,
+        true, RGB(255, 0, 255));
+
+    ImageManager::GetSingleton()->AddImage("ui_arrowSmall",
+        "Image/ui/menuTab3.bmp", 28, 20, 2, 1,
+        true, RGB(255, 0, 255));
+
+    ImageManager::GetSingleton()->AddImage("landSelection1x1",
+        "Image/landSelection1x1.bmp", 320, 32, 10, 1,
+        true, RGB(255, 0, 255));
+    
+    ImageManager::GetSingleton()->AddImage("landSelection2x2",
+        "Image/landSelection2x2.bmp", 400, 40, 10, 1,
         true, RGB(255, 0, 255));
 
     return S_OK;

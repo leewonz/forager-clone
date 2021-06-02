@@ -172,7 +172,9 @@
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="TimerManager.cpp" />
     <ClCompile Include="UIButton.cpp" />
+    <ClCompile Include="UIConstruction.cpp" />
     <ClCompile Include="UIContainer.cpp" />
+    <ClCompile Include="UICrafting.cpp" />
     <ClCompile Include="UIInventory.cpp" />
     <ClCompile Include="UIObject.cpp" />
   </ItemGroup>
@@ -210,7 +212,9 @@
     <ClInclude Include="Timer.h" />
     <ClInclude Include="TimerManager.h" />
     <ClInclude Include="UIButton.h" />
+    <ClInclude Include="UIConstruction.h" />
     <ClInclude Include="UIContainer.h" />
+    <ClInclude Include="UICrafting.h" />
     <ClInclude Include="UIInventory.h" />
     <ClInclude Include="UIObject.h" />
   </ItemGroup>

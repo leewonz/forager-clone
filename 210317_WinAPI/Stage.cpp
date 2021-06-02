@@ -2,6 +2,7 @@
 #include "Structure.h"
 #include "GameData.h"
 #include "StructureInfo.h"
+#include "CommonFunction.h"
 
 HRESULT Stage::Init(POINT tileSize)
 {
@@ -54,7 +55,10 @@ void Stage::Update()
         }
     }
 
-    /*for(structure structures*/
+    for (int i = 0; i < structures.size(); i++)
+    {
+        structures[i]->Update();
+    }
 }
 
 void Stage::Render(HDC hdc)
@@ -209,20 +213,21 @@ bool Stage::BuildStructure(POINT tilePos, int typeIdx)
 
         FPOINT anchor = TileToPos(tilePos);
         anchor.y += Con::TILESIZE;
-        FPOINT size = FPOINT{
-            (float)tileSize.x * Con::TILESIZE,
-            (float)tileSize.y * Con::TILESIZE
-        };
-        FPOINT pos = anchor;
-        pos.x += size.x * 0.5f;
-        pos.y -= size.y * 0.5f;
-        FPOINT offset = FPOINT{
-            -size.x * 0.5f,
-            -size.y * 0.5f
-        };
-        tempStr->SetPos(pos);
-        tempStr->SetSize(size);
-        tempStr->SetOffset(offset);
+        tempStr->SetAnchorPos(anchor);
+        //FPOINT size = FPOINT{
+        //    (float)tileSize.x * Con::TILESIZE,
+        //    (float)tileSize.y * Con::TILESIZE
+        //};
+        //FPOINT pos = anchor;
+        //pos.x += size.x * 0.5f;
+        //pos.y -= size.y * 0.5f;
+        //FPOINT offset = FPOINT{
+        //    -size.x * 0.5f,
+        //    -size.y * 0.5f
+        //};
+        //tempStr->SetPos(pos);
+        //tempStr->SetSize(size);
+        //tempStr->SetOffset(offset);
 
         // 4. 만들어진 건물이 있는 Terrain 타일을 막혀있다고 세팅힌다.
         for (int y = tileRect.top; y <= tileRect.bottom; y++)
@@ -236,8 +241,55 @@ bool Stage::BuildStructure(POINT tilePos, int typeIdx)
         // 5. 건물을 벡터에 넣기
         structures.push_back(tempStr);
         GetTerrain(selectedTile)->SetStructure(tempStr);
+        tempStr->SetTilePos(selectedTile);
         return true;
     }
+}
+
+bool Stage::DestroyStructure(Structure* structure)
+{
+    vector<Structure*>::iterator iter;
+    for (iter = structures.begin(); iter != structures.end(); ++iter)
+    {
+        if (*iter == structure)
+        {
+            POINT tilePos = structure->GetTilePos();
+            POINT tileSize = GameData::GetSingleton()->GetStructureInfo(structure->GetStructureType())->GetTileSize();
+            RECT tileRect = RECT{
+                tilePos.x,
+                tilePos.y - tileSize.y + 1,
+                tilePos.x + tileSize.y - 1,
+                tilePos.y };
+
+            for (int x = tileRect.left; x <= tileRect.right; x++)
+            {
+                for (int y = tileRect.top; y <= tileRect.bottom; y++)
+                {
+                    terrainTiles[y][x].SetIsFree(true);
+                }
+            }
+
+            terrainTiles[tilePos.y][tilePos.x].SetStructure(nullptr);
+            structures.erase(iter);
+            SAFE_RELEASE(structure);
+
+            return true;
+        }
+    }
+    return false;
+}
+
+Structure* Stage::GetStructureAtPoint(FPOINT point)
+{
+    vector<Structure*>::iterator iter;
+    for (iter = structures.begin(); iter != structures.end(); ++iter)
+    {
+        if (PointInRect(toPoint(point), (*iter)->GetTileFullBox()))
+        {
+            return *iter;
+        }
+    }
+    return nullptr;
 }
 
 void Stage::RefreshTileShapeAll()
@@ -278,7 +330,15 @@ void Stage::InitInfo()
 
 Terrain* Stage::GetTerrain(POINT TilePos)
 {
-    return &terrainTiles[TilePos.y][TilePos.x];
+    if (TilePos.x < 0 || TilePos.y < 0 ||
+        TilePos.x >= Con::TILE_X || TilePos.y >= Con::TILE_Y)
+    {
+        return nullptr;
+    }
+    else
+    {
+        return &terrainTiles[TilePos.y][TilePos.x];
+    }
 }
 
 

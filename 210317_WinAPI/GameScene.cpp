@@ -8,10 +8,14 @@
 #include "InventoryContainer.h"
 #include "Inventory.h"
 #include "UIInventory.h"
+#include "UIConstruction.h"
+#include "UIContainer.h"
+#include "UICrafting.h"
 #include "DropContainer.h"
 #include "Drop.h"
 #include "GameData.h"
 #include "StructureInfo.h"
+#include "Structure.h"
 #include "config.h"
 #include "CommonFunction.h"
 
@@ -23,7 +27,7 @@ HRESULT GameScene::Init()
 
 	Camera* cam = Camera::GetSingleton();
 	cam->SetScreenSize(POINT{ GAMESCENESIZE_X , GAMESCENESIZE_Y });
-	cam->SetScale(1.5f);
+	cam->SetScale(3.0f);
 
 	stage = new Stage();
 	stage->Init(POINT{ Con::TILESIZE, Con::TILESIZE });
@@ -41,6 +45,23 @@ HRESULT GameScene::Init()
 	uiInventory = new UIInventory();
 	uiInventory->Init(POINT{ Con::INVEN_PLAYER_X, Con::INVEN_PLAYER_Y });
 	uiInventory->SetInventory(inventoryContainer->GetPlayerInventory());
+
+	uiConstruction = new UIConstruction();
+	uiConstruction->Init();
+	uiConstruction->SetStage(stage);
+	uiConstruction->SetInventoryContainer(inventoryContainer);
+
+	uiContainer = new UIContainer();
+	uiContainer->Init();
+	uiContainer->AddChild(uiInventory);
+	uiContainer->AddChild(uiConstruction);
+	uiContainer->SetActive(false);
+
+	uiCrafting = new UICrafting();
+	uiCrafting->Init();
+	uiCrafting->SetActive(false);
+	uiCrafting->SetInventoryContainer(inventoryContainer);
+	uiCrafting->SetDropContainer(dropContainer);
 
 	camPos = player->GetPos();
 
@@ -61,12 +82,16 @@ void GameScene::Release()
 	SAFE_RELEASE(player);
 	SAFE_RELEASE(inventoryContainer);
 	SAFE_RELEASE(dropContainer);
-	SAFE_RELEASE(uiInventory);
+	//SAFE_RELEASE(uiInventory);
+	//SAFE_RELEASE(uiConstruction);
+	SAFE_RELEASE(uiContainer);
+	SAFE_RELEASE(uiCrafting);
 }
 
 void GameScene::Update()
 {
 	Camera* cam = Camera::GetSingleton();
+	GameData* gameData = GameData::GetSingleton();
 	FPOINT worldMouse = cam->CameraToWorld(toFpoint(g_ptMouse));
 
 	UpdateTimes();
@@ -84,38 +109,34 @@ void GameScene::Update()
 	if (KeyManager::GetSingleton()->IsStayKeyDown('C'))
 	{
 		dropContainer->AddDrop(
-			Item{ (rand() % 4) + 1,1 },
+			Item{ (rand() % GameData::GetSingleton()->GetItemInfoCount() - 1) + 1,100 },
 			FPOINT{ (float)(rand() % (Con::TILE_X * Con::TILESIZE)),
 					(float)(rand() % (Con::TILE_Y * Con::TILESIZE)) });
 	}
 
 	if (KeyManager::GetSingleton()->IsOnceKeyDown(VK_LBUTTON))
 	{
-		bool isUIClicked = false;
-		POINT selTile = stage->PosToTile(worldMouse);
+		//bool isUIClicked = false;
+		//POINT selTile = stage->PosToTile(worldMouse);
+		//Terrain* selTerrain = stage->GetTerrain(selTile);
 
-		if (!isUIClicked)
+		if (UIObject::GetIsClicked(uiContainer->MouseDown(g_ptMouse)) == false &&
+			UIObject::GetIsClicked(uiCrafting->MouseDown(g_ptMouse)) == false)
 		{
-			isUIClicked = UIObject::GetIsClicked(uiInventory->MouseDown(g_ptMouse));
-		}
-		
-		if (!isUIClicked)
-		{
-			if (stage->CanBuild(RECT{ selTile.x, selTile.y, selTile.x, selTile.y }))
+			POINT selTile = stage->PosToTile(worldMouse);
+			//stage->DestroyStructure(stage->GetTerrain(selTile)->GetStructure());
+			Structure* structure = stage->GetStructureAtPoint(worldMouse);
+			if (structure)
 			{
-				stage->BuildStructure(selTile, 0);
+				SpawnDrop(structure);
+				stage->DestroyStructure(structure);
 			}
 		}
 	}
 
 	if (KeyManager::GetSingleton()->IsOnceKeyDown(VK_RBUTTON))
 	{
-		POINT selTile = stage->PosToTile(worldMouse);
-		Terrain* selTerrain = stage->GetTerrain(selTile);
-		if (selTerrain->GetIsLand() == false)
-		{
-			selTerrain->SetFloorIdx(1);
-		}
+
 	}
 
 	if (KeyManager::GetSingleton()->IsOnceKeyUp(VK_LBUTTON))
@@ -145,58 +166,102 @@ void GameScene::Update()
 		player->Move(moveDir);
 	}
 
-	if (inventoryContainer
-		&& inventoryContainer->GetPlayerInventory())
+	//if (inventoryContainer
+	//	&& inventoryContainer->GetPlayerInventory())
+	//{
+	//	bool shiftDown = KeyManager::GetSingleton()->IsStayKeyDown(VK_LSHIFT);
+	//	int itemNum = 0;
+	//	{
+	//		if (KeyManager::GetSingleton()->IsOnceKeyDown('1')) { itemNum = 1; }
+	//		if (KeyManager::GetSingleton()->IsOnceKeyDown('2')) { itemNum = 2; }
+	//		if (KeyManager::GetSingleton()->IsOnceKeyDown('3')) { itemNum = 3; }
+	//		if (KeyManager::GetSingleton()->IsOnceKeyDown('4')) { itemNum = 4; }
+	//	}
+	//	
+	//	if(itemNum != 0)
+	//	{
+	//		if (shiftDown)
+	//		{
+	//			inventoryContainer->GetPlayerInventory()->RemoveItem(Item{ itemNum, 1 });
+	//		}
+	//		else
+	//		{
+	//			inventoryContainer->GetPlayerInventory()->AddItem(Item{ itemNum, 1 });
+	//		}
+	//	}
+	//}
+
+	//if (uiInventory)
+	//{
+	//	if (KeyManager::GetSingleton()->IsOnceKeyDown(VK_TAB))
+	//	{
+	//		uiInventory->SetActive(!uiInventory->GetActive());
+	//	}
+	//}
+
+	//if (uiConstruction)
+	//{
+	//	if (KeyManager::GetSingleton()->IsOnceKeyDown('V'))
+	//	{
+	//		uiConstruction->SetActive(!uiConstruction->GetActive());
+	//	}
+	//}
+
+	if (KeyManager::GetSingleton()->IsOnceKeyDown(VK_ESCAPE))
 	{
-		bool shiftDown = KeyManager::GetSingleton()->IsStayKeyDown(VK_LSHIFT);
-		int itemNum = 0;
+		if (uiCrafting && uiCrafting->GetActive())
 		{
-			if (KeyManager::GetSingleton()->IsOnceKeyDown('1')) { itemNum = 1; }
-			if (KeyManager::GetSingleton()->IsOnceKeyDown('2')) { itemNum = 2; }
-			if (KeyManager::GetSingleton()->IsOnceKeyDown('3')) { itemNum = 3; }
-			if (KeyManager::GetSingleton()->IsOnceKeyDown('4')) { itemNum = 4; }
+			uiCrafting->Back();
 		}
-		
-		if(itemNum != 0)
+		else if (uiContainer)
 		{
-			if (shiftDown)
+			if (uiContainer->GetActive())
 			{
-				inventoryContainer->GetPlayerInventory()->RemoveItem(Item{ itemNum, 1 });
+				uiContainer->Back();
 			}
 			else
 			{
-				inventoryContainer->GetPlayerInventory()->AddItem(Item{ itemNum, 1 });
+				uiContainer->SetActive(true);
 			}
 		}
 	}
 
-	if (uiInventory)
+	if (KeyManager::GetSingleton()->IsOnceKeyDown('E'))
 	{
-		if (KeyManager::GetSingleton()->IsOnceKeyDown(VK_TAB))
+		Structure* structure = stage->GetStructureAtPoint(worldMouse);
+		if (structure && uiCrafting && uiContainer->GetActive() == false)
 		{
-			uiInventory->SetActive(!uiInventory->GetActive());
+			StructureInfo* info = gameData->GetStructureInfo(structure->GetStructureType());
+			if (info->GetCodename() == "forge" ||
+				info->GetCodename() == "furnace")
+			{
+				uiCrafting->SetActive(true);
+				uiCrafting->SetStructure(structure);
+			}
 		}
 	}
-
-
+	
 	if (KeyManager::GetSingleton()->IsStayKeyDown('Q'))
 	{
 		GameData::GetSingleton()->Save();
 	}
 
-	stage->Update();
-	player->Update();
+	if (stage) { stage->Update(); }
+	if (player) { player->Update(); }
+	if (dropContainer) { dropContainer->Update(); }
 	CheckCollision();
 	CheckCollisionPlayerAndItem();
+	SetCamera();
 }
 
 void GameScene::Render(HDC hdc)
 {
-	SetCamera();
 	PatBlt(hdc, 0, 0,
 		GAMESCENESIZE_X, GAMESCENESIZE_X, WHITENESS);
 	if (stage && dropContainer) 
 	{ 
+		int playerY = -1;
+
 		map<float, Drop*>::iterator currDropIter;
 		map<float, Drop*>::iterator currDropIterEnd;
 
@@ -204,24 +269,36 @@ void GameScene::Render(HDC hdc)
 
 		currDropIter = dropContainer->getMapBegin();
 		currDropIterEnd = dropContainer->getMapEnd();
+
+		if (player)
+		{
+			playerY = (player->GetBox().bottom - (Con::TILESIZE / 2)) / Con::TILESIZE;
+		}
+
 		for (int tileY = 0; tileY < Con::TILE_Y; tileY++)
 		{
-			if (player && stage->PosToTile(player->GetPos()).y == tileY)
+			stage->RenderLine(hdc, tileY);
+
+			if (player && playerY == tileY)
 			{
 				player->Render(hdc);
 			}
+
 			while (currDropIter != currDropIterEnd &&
-				currDropIter->first / Con::TILESIZE < tileY)
+				(int)currDropIter->first / Con::TILESIZE <= tileY)
 			{
 				currDropIter->second->Render(hdc);
 				++currDropIter;
 			}
-			stage->RenderLine(hdc, tileY);
 		}
 	}
 	//if (player) { player->Render(hdc); }
-	if (uiInventory) { uiInventory->Render(hdc); }
+	//if (uiInventory) { uiInventory->Render(hdc); }
+	//if (uiConstruction) { uiConstruction->Render(hdc); }
+	if (uiContainer) { uiContainer->Render(hdc); }
 	//if (dropContainer) { dropContainer->Render(hdc); }
+	if (uiCrafting) { uiCrafting->Render(hdc); }
+	UpdateCrafting();
 }
 
 void GameScene::InitTimes()
@@ -236,34 +313,45 @@ void GameScene::UpdateTimes()
 	sceneTime += TimerManager::GetSingleton()->GetElapsedTime();
 	gameTime += TimerManager::GetSingleton()->GetElapsedTime();
 
-	if (lastResourceRegenTime < gameTime + Con::REGEN_RESOURCE_INTERVAL)
+	if (lastResourceRegenTime + Con::REGEN_RESOURCE_INTERVAL < gameTime)
 	{
 		lastResourceRegenTime += Con::REGEN_RESOURCE_INTERVAL;
 		for (int i = 0; i < Con::REGEN_RESOURCE_COUNT; i++)
 		{
-			int randResourceNum = rand() % 4;
+			int randResourceNum = rand() % 8;
 			int randTileX = rand() % Con::TILE_X;
 			int randTileY = rand() % Con::TILE_Y;
 			int randResourceType = -1;
+			string structureCodename = "";
 			switch (randResourceNum)
 			{
 			case 0:
-				randResourceType = GameData::GetSingleton()->
-					FindStructureInfo("structure_tree_grass");
+				structureCodename = "tree_grass";
 				break;
 			case 1:
-				randResourceType = GameData::GetSingleton()->
-					FindStructureInfo("structure_tree_fire");
+				structureCodename = "tree_fire";
 				break;
 			case 2:
-				randResourceType = GameData::GetSingleton()->
-					FindStructureInfo("structure_tree_snow");
+				structureCodename = "tree_snow";
 				break;
 			case 3:
-				randResourceType = GameData::GetSingleton()->
-					FindStructureInfo("structure_tree_desert");
+				structureCodename = "tree_desert";
+				break;
+			case 4:
+				structureCodename = "stone";
+				break;
+			case 5:
+				structureCodename = "coal";
+				break;
+			case 6:
+				structureCodename = "iron";
+				break;
+			case 7:
+				structureCodename = "gold";
 				break;
 			}
+			randResourceType = GameData::GetSingleton()->
+				FindStructureInfo(structureCodename);
 			if (randResourceType != -1)
 			{
 				POINT randResourceSize = 
@@ -298,7 +386,7 @@ void GameScene::CheckCollision()
 			for (int x = plCheckRegion.left; x <= plCheckRegion.right; x++)
 			{
 				Terrain* currTerrain = stage->GetTerrain(POINT{ x, y });
-				if (!currTerrain->GetIsFree()) 
+				if (!currTerrain->GetIsPassable()) 
 				{
 					CollisionPush(player, currTerrain);
 				}
@@ -322,8 +410,7 @@ void GameScene::CheckCollisionPlayerAndItem()
 			Drop* drop = dropContainer->GetDrop(i);
 			if (CheckIfColliding(player, (StageObject*)drop))
 			{
-				inventoryContainer->GetPlayerInventory()->
-					AddItem(drop->GetItem());
+				inventoryContainer->AddDropItem(drop->GetItem());
 
 				dropContainer->RemoveDrop(i);
 			}
@@ -391,4 +478,47 @@ void GameScene::SetCamera()
 		camPos.y * (1 - smoothSpeed) + targetPos.y * smoothSpeed,
 	};
 	cam->SetPosCenter(camPos);
+}
+
+void GameScene::SpawnDrop(Structure* structure)
+{
+	vector<Item> drops = structure->GetDrops();
+	for (int i = 0; i < drops.size(); i++)
+	{
+		dropContainer->AddDrop(drops[i], structure->GetPos());
+	}
+}
+
+float GameScene::GetGameTime()
+{
+	return gameTime;
+}
+
+float GameScene::GetSceneTime()
+{
+	return sceneTime;
+}
+
+void GameScene::UpdateCrafting()
+{
+	if (stage)
+	{
+		int structureCount = stage->GetStructureCount();
+		for (int i = 0; i < structureCount; i++)
+		{
+			Structure* structure = stage->GetStructure(i);
+			if (structure)
+			{
+				vector<Item> outputs = structure->GetCraftingOutputItems();
+
+				structure->Update();
+
+				for (int i = 0; i < outputs.size(); i++)
+				{
+					dropContainer->AddDrop(outputs[i], structure->GetPos());
+				}
+				structure->ResetCraftingOutputItems();
+			}
+		}
+	}
 }

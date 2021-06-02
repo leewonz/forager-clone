@@ -10,19 +10,22 @@ HRESULT MainGame::Init()
 {
 	hdc = GetDC(g_hWnd);
 
+	srand(time(NULL));
+
 	KeyManager::GetSingleton()->Init();
 	ImageManager::GetSingleton()->Init();
 	Camera::GetSingleton()->Init();
 	SceneManager::GetSingleton()->Init();
 	GameData::GetSingleton()->Init();
+	Image::SetCamera(Camera::GetSingleton());
 
 	// 메인게임의 초기화 함수
 	//hTimer = (HANDLE)SetTimer(g_hWnd, 0, 1, NULL);
 
 	// 백버퍼 이미지
 	int maxWidth, maxHeight;
-	maxWidth = max(WINSIZE_X, TILEMAPTOOLSIZE_X);
-	maxHeight = max(WINSIZE_Y, TILEMAPTOOLSIZE_Y);
+	maxWidth = max(WINSIZE_X, GAMESCENESIZE_X);
+	maxHeight = max(WINSIZE_Y, GAMESCENESIZE_Y);
 
 	backBuffer = new Image();
 	backBuffer->Init(maxWidth, maxHeight);
@@ -58,6 +61,7 @@ void MainGame::Render()
 {
 	HDC hBackDC = backBuffer->GetMemDC();
 
+	Image::SetCameraStatus(Camera::GetSingleton());
 	SceneManager::GetSingleton()->Render(hBackDC);
 
 	// 인사

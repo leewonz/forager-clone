@@ -1,5 +1,7 @@
 #include "Image.h"
-#include "Camera.h"
+
+Camera* Image::cam = nullptr;
+CameraStatus Image::camStatus = CameraStatus();
 
 HRESULT Image::Init(int width, int height)
 {
@@ -289,25 +291,27 @@ void Image::AlphaRender(HDC hdc, int destX, int destY, bool isCenterRenderring)
 
 void Image::StageRender(HDC hdc, float destX, float destY, int currFrameX, int currFrameY, bool isCenterRendering, float size)
 {
-    Camera* cam = Camera::GetSingleton();
-    FPOINT camPos = cam->WorldToCamera(FPOINT{ (float)destX, (float)destY });
-    float camScale = cam->GetScale();
-    POINT camSize = cam->GetScreenSize();
-    if (isCenterRendering)
+    static RECT intersection = RECT{ 0, 0, 0, 0 };
+    if (cam)
     {
-        POINT offset = OffsetFromCenter(size * camScale);
-        camPos.x += offset.x;
-        camPos.y += offset.y;
+        FPOINT camPos = cam->WorldToCamera(FPOINT{ destX, destY });
+        float camScale = camStatus.scale;
+        POINT camSize = camStatus.screenSize;
+        if (isCenterRendering)
+        {
+            POINT offset = OffsetFromCenter(size * camScale);
+            camPos.x += offset.x;
+            camPos.y += offset.y;
+        }
+        RECT destRect = RECT{ (LONG)camPos.x,
+                              (LONG)camPos.y,
+                              (LONG)(camPos.x + (imageInfo->frameWidth * size * camScale)),
+                              (LONG)(camPos.y + (imageInfo->frameHeight * size * camScale)) };
+        RECT screenRect = RECT{ 0,0, camSize.x, camSize.y };
+        if (!IntersectRect(&intersection, &screenRect, &destRect)) { return; }
+        //FrameRender(hdc, camPos.x, camPos.y, currFrameX, currFrameY, isCenterRendering, size * camScale);
+        FrameRender(hdc, destRect, currFrameX, currFrameY);
     }
-    RECT destRect = RECT{ (LONG)camPos.x,
-                          (LONG)camPos.y,
-                          (LONG)(camPos.x + (imageInfo->frameWidth * size * camScale)),
-                          (LONG)(camPos.y + (imageInfo->frameHeight * size * camScale)) };
-    RECT intersection = RECT{ 0, 0, 0, 0 };
-    RECT screenRect = RECT{ 0,0, camSize.x, camSize.y };
-    if (!IntersectRect(&intersection, &screenRect, &destRect)) { return; }
-    //FrameRender(hdc, camPos.x, camPos.y, currFrameX, currFrameY, isCenterRendering, size * camScale);
-    FrameRender(hdc, destRect, currFrameX, currFrameY);
 }
 
 void Image::Release()
@@ -332,6 +336,10 @@ void Image::Release()
 
 void Image::StageRectangle(HDC hdc, RECT rect)
 {
-    RECT worldRect = Camera::GetSingleton()->WorldToCamera(rect);
-    Rectangle(hdc, worldRect.left, worldRect.top, worldRect.right, worldRect.bottom);
+    int debug = DEBUG_DRAW;
+    if(debug)
+    { 
+        RECT worldRect = Camera::GetSingleton()->WorldToCamera(rect);
+        Rectangle(hdc, worldRect.left, worldRect.top, worldRect.right, worldRect.bottom);
+    }
 }

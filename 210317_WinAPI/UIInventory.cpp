@@ -7,8 +7,11 @@
 
 HRESULT UIInventory::Init(POINT gridCount)
 {
-	pos.x = 160;
-	pos.y = 160;
+	pos.x = startPos.x;
+	pos.y = startPos.y;
+	size = FPOINT{ GAMESCENESIZE_X, GAMESCENESIZE_Y };
+	
+
 	this->slotGridCount = gridCount;
 	for (int i = 0; i < slotGridCount.x * slotGridCount.y; i++)
 	{
@@ -24,6 +27,12 @@ HRESULT UIInventory::Init(POINT gridCount)
 		Slot slot = Slot{ i, slotRect };
 		slots.push_back(slot);
 	}
+
+	inventorySlotImg = 
+		ImageManager::GetSingleton()->FindImage("ui_inventorySlot");
+	inventorySlotSelectionImg = 
+		ImageManager::GetSingleton()->FindImage("ui_inventorySlotSelection");
+
 	return S_OK;
 }
 
@@ -41,8 +50,13 @@ pair<UI_MESSAGE, int> UIInventory::MouseDown(POINT mousePos)
 			{
 				isDragging = true;
 				draggingSlot = i;
+				selectedSlot = i;
 				return { UI_MESSAGE::OK, i };
 			}
+		}
+		if (PointInRect(mousePos, RECT{ 0, 0, (LONG)size.x, (LONG)size.y }))
+		{
+			return { UI_MESSAGE::BLOCKED, 0 };
 		}
 	}
 	return {UI_MESSAGE::NONE, 0};
@@ -60,6 +74,7 @@ pair<UI_MESSAGE, int> UIInventory::MouseUp(POINT mousePos)
 
 			if (PointInRect(mousePos, slotRect))
 			{
+				selectedSlot = upSlot;
 				if (isDragging)
 				{
 					Item itemOld = inventory->RemoveItem(draggingSlot);
@@ -91,6 +106,11 @@ pair<UI_MESSAGE, int> UIInventory::MouseUp(POINT mousePos)
 	return { UI_MESSAGE::NONE, 0 };
 }
 
+pair<UI_MESSAGE, int> UIInventory::Back()
+{
+	return { UI_MESSAGE::NONE, 0 };
+}
+
 void UIInventory::OnActivate()
 {
 	isDragging = false;
@@ -105,6 +125,7 @@ void UIInventory::OnDeactivate()
 
 void UIInventory::Render(HDC hdc)
 {
+	float currTime = TimerManager::GetSingleton()->GetProgramTime();
 	if (isActive && inventory)
 	{
 		//Rectangle(hdc, 0, 0, 100, 100);
@@ -120,7 +141,17 @@ void UIInventory::Render(HDC hdc)
 			item = inventory->GetItem(i);
 			info = GameData::GetSingleton()->GetItemInfo(item.idx);
 
-			Rectangle(hdc, slotRect.left, slotRect.top, slotRect.right, slotRect.bottom);
+			inventorySlotImg->Render(
+				hdc, slotRect.left + SLOT_IMG_OFFSET, slotRect.top + SLOT_IMG_OFFSET, 4.0f, false);
+			//Rectangle(hdc, slotRect.left, slotRect.top, slotRect.right, slotRect.bottom);
+
+			if (selectedSlot == i)
+			{
+				inventorySlotSelectionImg->FrameRender(
+					hdc, slotRect.left + SLOT_IMG_OFFSET, slotRect.top + SLOT_IMG_OFFSET,
+					(int)(currTime * 10.0f) % inventorySlotSelectionImg->GetImageInfo()->maxFrameX, 0, false, 1.0f);
+			}
+
 			info->img->Render(hdc, slotRect.left, slotRect.top, 2.0f, false);
 			wsprintf(szText, "%d", item.count);
 			TextOut(hdc, slotRect.left, slotRect.top + 50, szText, strlen(szText));

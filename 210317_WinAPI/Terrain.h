@@ -19,6 +19,7 @@ private:
 	POINT framePos;
 	bool isLand;
 	bool isFree;
+	bool isPassable;
 
 public:
 	virtual HRESULT Init(Stage* parentStage);
@@ -30,8 +31,10 @@ public:
 	TerrainType GetTerrainType();
 	void SetIsLand(bool isLand);
 	bool GetIsLand();
-	void SetIsFree(bool isLand);
+	void SetIsFree(bool isFree);
 	bool GetIsFree();
+	void SetIsPassable(bool isPassable);
+	bool GetIsPassable();
 	void SetFloorIdx(int floorIdx);
 	int GetFloorIdx();
 	void SetStage(Stage* parentStage);
