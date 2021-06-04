@@ -7,7 +7,7 @@ HRESULT Player::Init()
 {
     img_l = ImageManager::GetSingleton()->FindImage("char_theForager_l");
     img_r = ImageManager::GetSingleton()->FindImage("char_theForager_r");
-    SetPos(FPOINT{ 100, 100 });
+    
     SetOffset(FPOINT{ (float)-BOX_SIZE_X / 2, (float)-BOX_SIZE_Y / 2 });
     SetSize(FPOINT{ (float)BOX_SIZE_X, (float)BOX_SIZE_Y });
     return S_OK;

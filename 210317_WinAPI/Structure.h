@@ -4,10 +4,12 @@
 #include "GameData.h"
 
 class Stage;
+class Image;
 class InventoryContainer;
 class Structure : public StageObject
 {
 	Stage* parentStage;
+	Image* progressCircleImg;
 	InventoryContainer* inventoryContainer;
 	//GameScene* gameScene;
 	POINT tilePos;
@@ -52,6 +54,8 @@ public:
 	void StartCrafting(int recipeListIdx, int amount);
 	// 크래프팅 한무 시작 버튼 눌렀을때 실행
 	void StartCraftingInfinite(int recipeListIdx);
+	// 무한으로 크래프팅 중에 재료가 들어갈 때마다 실행
+	void ResumeCraftingInfinite();
 	// 매번 크래프팅 실행할거
 	void CraftingUpdate();
 	// 인벤에 크래프팅 재료 있는가?
@@ -72,9 +76,12 @@ public:
 	//inline void SetCraftingOutputCount(int count) { this->craftingOutputCount = count; }
 	vector<Item> GetDrops();
 
+	inline bool GetCraftingInputCount() { return craftingInputCount; }
+	inline void SetCraftingInputCount(int count) { craftingInputCount = count; }
 	inline vector<Item> GetCraftingRequiredItems() { return craftingRequiredItemList; }
 	inline void ResetCraftingRequiredItems() { craftingRequiredItemList.clear(); }
 	inline vector<Item> GetCraftingOutputItems() { return craftingOutputItemList; }
 	inline void ResetCraftingOutputItems() { craftingOutputItemList.clear(); }
+	inline bool GetIsCraftingInfinite() { return isCraftingInfinite; }
 };
 

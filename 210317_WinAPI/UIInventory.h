@@ -22,6 +22,7 @@ private:
 
 	Image* inventorySlotImg;
 	Image* inventorySlotSelectionImg;
+	Image* bgImg;
 	const int SLOT_IMG_OFFSET = -12;
 
 	bool isDragging = false;

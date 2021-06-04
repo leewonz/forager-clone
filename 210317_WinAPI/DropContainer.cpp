@@ -30,7 +30,7 @@ void DropContainer::Render(HDC hdc)
     //    drops[i]->Render(hdc);
     //}
     multimap<float, Drop*>::iterator iter;
-    for (iter = mDrops.begin(); iter != mDrops.end(); iter++)
+    for (iter = mDrops.begin(); iter != mDrops.end(); ++iter)
     {
         iter->second->Render(hdc);
     }
@@ -69,8 +69,8 @@ void DropContainer::AddDrop(Item item, FPOINT pos)
 {
     Drop* drop = new Drop();
     FPOINT RandomItemPos = FPOINT{
-        pos.x + (float)((rand() % 15) - 7),
-        pos.y + (float)((rand() % 15) - 7),
+        pos.x + (float)((rand() % 19) - 10),
+        pos.y + (float)((rand() % 19) - 10),
     };
 
     drop->Init();
@@ -91,7 +91,7 @@ void DropContainer::RemoveDrop(int idx)
     Drop* willErase = *vIter;
     drops.erase(vIter);
 
-    for (mapIter = mDrops.begin(); mapIter != mDrops.end(); mapIter++)
+    for (mapIter = mDrops.begin(); mapIter != mDrops.end(); ++mapIter)
     {
         if (mapIter->second == willErase)
         {

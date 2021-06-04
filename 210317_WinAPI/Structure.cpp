@@ -7,6 +7,7 @@
 
 HRESULT Structure::Init(Stage* parentStage)
 {
+	progressCircleImg = ImageManager::GetSingleton()->FindImage("progressCircle");
 	tileFullBox = GetBox();
 	SetStage(parentStage);
 	craftingIdx = -1;
@@ -29,11 +30,28 @@ void Structure::Render(HDC hdc)
 	
 	RECT box = GetBox();
 	POINT imgOffset = info->GetImgOffset();
+	CraftingRecipe* recipe = GetCurrRecipe();
 
 	info->GetImg()->
 		StageRender(hdc, tileFullBox.left + imgOffset.x, tileFullBox.top + imgOffset.y, imageRandomFrame, 0, false, 1);
 	//Image::StageRectangle(hdc, tileFullBox);
 	//Image::StageRectangle(hdc, box);
+	if (recipe)
+	{
+		if (GetCraftingInputCount() > 0)
+		{
+			int progressFrame = ((TimerManager::GetSingleton()->GetProgramTime() - craftingStartTime) / recipe->craftingTime) * 8;
+			progressCircleImg->StageRender(
+				hdc, pos.x, pos.y, progressFrame, 0, true, 0.5f);
+		}
+		if (GetCraftingInputCount() > 0 || GetIsCraftingInfinite())
+		{
+			ItemInfo* resultItemInfo = GameData::GetSingleton()->GetItemInfo(recipe->resultItemIdx);
+			Image* resultItemImg = resultItemInfo->img;
+			resultItemImg->StageRender(
+				hdc, pos.x, pos.y, 0, 0, true, 0.5f);
+		}
+	}
 }
 
 void Structure::SetStage(Stage* parentStage)
@@ -179,6 +197,12 @@ void Structure::StartCraftingInfinite(int craftingListIdx)
 			craftingRequiredItemList.push_back(craftingRecipes[craftingIdx]->materials[i]);
 		}
 	}
+}
+
+void Structure::ResumeCraftingInfinite()
+{
+	SetCraftingInputCount(1);
+	craftingStartTime = TimerManager::GetSingleton()->GetProgramTime();
 }
 
 void Structure::CraftingUpdate()

@@ -59,77 +59,77 @@ void GameData::InitItemInfo()
 	info.idx = 1;
 	info.category = ItemCategory::MATERIAL;
 	info.codename = "bone";
-	info.name = "bone";
+	info.name = "Bone";
 	info.img = ImageManager::GetSingleton()->FindImage("item_" + info.codename);
 	itemInfos.push_back(info);
 
 	info.idx = 2;
 	info.category = ItemCategory::MATERIAL;
 	info.codename = "flower";
-	info.name = "flower";
+	info.name = "Flower";
 	info.img = ImageManager::GetSingleton()->FindImage("item_" + info.codename);
 	itemInfos.push_back(info);
 
 	info.idx = 3;
 	info.category = ItemCategory::MATERIAL;
 	info.codename = "stone";
-	info.name = "stone";
+	info.name = "Stone";
 	info.img = ImageManager::GetSingleton()->FindImage("item_" + info.codename);
 	itemInfos.push_back(info);
 
 	info.idx = 4;
 	info.category = ItemCategory::MATERIAL;
 	info.codename = "wood";
-	info.name = "wood";
+	info.name = "Wood";
 	info.img = ImageManager::GetSingleton()->FindImage("item_" + info.codename);
 	itemInfos.push_back(info);
 
 	info.idx = 5;
 	info.category = ItemCategory::MATERIAL;
 	info.codename = "coal";
-	info.name = "coal";
+	info.name = "Coal";
 	info.img = ImageManager::GetSingleton()->FindImage("item_" + info.codename);
 	itemInfos.push_back(info);
 
 	info.idx = 6;
 	info.category = ItemCategory::MATERIAL;
 	info.codename = "ironOre";
-	info.name = "ironOre";
+	info.name = "Iron Ore";
 	info.img = ImageManager::GetSingleton()->FindImage("item_" + info.codename);
 	itemInfos.push_back(info);
 	
 	info.idx = 7;
 	info.category = ItemCategory::MATERIAL;
 	info.codename = "goldOre";
-	info.name = "goldOre";
+	info.name = "Gold Ore";
 	info.img = ImageManager::GetSingleton()->FindImage("item_" + info.codename);
 	itemInfos.push_back(info);
 	
 	info.idx = 8;
 	info.category = ItemCategory::MATERIAL;
 	info.codename = "ironIngot";
-	info.name = "ironIngot";
+	info.name = "Iron Ingot";
 	info.img = ImageManager::GetSingleton()->FindImage("item_" + info.codename);
 	itemInfos.push_back(info);
 	
 	info.idx = 9;
 	info.category = ItemCategory::MATERIAL;
 	info.codename = "goldIngot";
-	info.name = "goldIngot";
+	info.name = "Gold Ingot";
 	info.img = ImageManager::GetSingleton()->FindImage("item_" + info.codename);
 	itemInfos.push_back(info);
 	
 	info.idx = 10;
 	info.category = ItemCategory::COIN;
 	info.codename = "coin";
-	info.name = "coin";
+	info.name = "Coin";
 	info.img = ImageManager::GetSingleton()->FindImage("item_" + info.codename);
 	itemInfos.push_back(info);
 		
 	info.idx = 11;
 	info.category = ItemCategory::MATERIAL;
 	info.codename = "brick";
-	info.name = "brick";
+	info.name = "Brick";
 	info.img = ImageManager::GetSingleton()->FindImage("item_" + info.codename);
 	itemInfos.push_back(info);
 
@@ -167,22 +167,22 @@ void GameData::InitStructureInfo()
 	StructureInfo* tempStructureInfo;
 
 	tempStructureInfo = new StructureInfo();
-	tempStructureInfo->Init(0, "furnace", "furnace");
+	tempStructureInfo->Init(0, "furnace", "Furnace");
 	tempStructureInfo->SetTileSize(POINT{ 2, 2 });
 	tempStructureInfo->SetImgOffset(POINT{ 1, -12 });
 	tempStructureInfo->AddDrop(Item{ FindItemInfo("stone"), 10 });
 	structureInfos.push_back(tempStructureInfo);
 
 	tempStructureInfo = new StructureInfo();
-	tempStructureInfo->Init(1, "forge", "forge");
+	tempStructureInfo->Init(1, "forge", "Forge");
 	tempStructureInfo->SetTileSize(POINT{ 2, 2 });
 	tempStructureInfo->SetImgOffset(POINT{ 0, -4 });
 	tempStructureInfo->AddDrop(Item{ FindItemInfo("brick"), 4 });
-	tempStructureInfo->AddDrop(Item{ FindItemInfo("ironOre"), 4 });
+	tempStructureInfo->AddDrop(Item{ FindItemInfo("ironIngot"), 4 });
 	structureInfos.push_back(tempStructureInfo);
 
 	tempStructureInfo = new StructureInfo();
-	tempStructureInfo->Init(2, "sewingStation", "sewingStation");
+	tempStructureInfo->Init(2, "sewingStation", "Sewing Station");
 	tempStructureInfo->SetTileSize(POINT{ 2, 2 });
 	tempStructureInfo->SetImgOffset(POINT{ 0, -18 });
 	tempStructureInfo->AddDrop(Item{ FindItemInfo("wood"), 10 });
@@ -263,7 +263,7 @@ void GameData::InitFloorInfo()
 
 	tempFloorInfo.idx = 1;
 	tempFloorInfo.codename = "bridge";
-	tempFloorInfo.name = "bridge";
+	tempFloorInfo.name = "Bridge";
 	tempFloorInfo.category = FloorCategory::BRIDGE;
 	tempFloorInfo.img = ImageManager::GetSingleton()->FindImage("floor_" + tempFloorInfo.codename);
 	floorInfos.push_back(tempFloorInfo);
@@ -331,7 +331,7 @@ void GameData::InitCraftingRecipe()
 	tempCraftingRecipe.materials[1] = EMPTY_ITEM;
 	tempCraftingRecipe.materials[2] = EMPTY_ITEM;
 	tempCraftingRecipe.materials[3] = EMPTY_ITEM;
-	tempCraftingRecipe.craftingTime = 2.0f;
+	tempCraftingRecipe.craftingTime = 1.0f;
 	craftingRecipes.push_back(tempCraftingRecipe);
 
 	tempCraftingRecipe = CraftingRecipe();
@@ -371,11 +371,11 @@ void GameData::InitCraftingRecipe()
 	tempCraftingRecipe.idx = 4;
 	tempCraftingRecipe.resultItemIdx = FindItemInfo("coin");
 	tempCraftingRecipe.structureIdx = FindStructureInfo("forge");
-	tempCraftingRecipe.materials[0] = Item{ FindItemInfo("goldIngot"), 2 };
+	tempCraftingRecipe.materials[0] = Item{ FindItemInfo("goldIngot"), 1 };
 	tempCraftingRecipe.materials[1] = EMPTY_ITEM;
 	tempCraftingRecipe.materials[2] = EMPTY_ITEM;
 	tempCraftingRecipe.materials[3] = EMPTY_ITEM;
-	tempCraftingRecipe.craftingTime = 2.0f;
+	tempCraftingRecipe.craftingTime = 4.0f;
 	craftingRecipes.push_back(tempCraftingRecipe);
 }
 

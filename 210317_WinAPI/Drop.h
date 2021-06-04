@@ -7,7 +7,7 @@ class Drop : public StageObject
 private:
 	const float SIZE = 24;
 	const float ANIM_SPEED = 3.0f;
-	const float ANIM_JUMP_HEIGHT = 12.0f;
+	const float ANIM_JUMP_HEIGHT = 15.0f;
 
 	GameNode* scene;
 	Item item;
@@ -25,5 +25,6 @@ public:
 	inline void SetScene(GameNode* scene) { this->scene = scene; };
 	inline void SetItem(Item item) { this->item = item; }
 	inline Item GetItem() { return this->item; }
+	inline bool IsAnimationEnded() { return animProgress > 0.99f; }
 };
 

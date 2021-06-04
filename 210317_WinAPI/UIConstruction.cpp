@@ -70,6 +70,18 @@ void UIConstruction::RemoveMaterial(Item* items, int size)
 	}
 }
 
+RECT UIConstruction::GetTileRect(FPOINT worldMousePos, POINT tileSize)
+{
+	POINT selectedTilePoint =
+		stage->PosToTile(POINT{
+			(int)(worldMousePos.x - ((tileSize.x - 1) * Con::TILESIZE / 2)),
+			(int)(worldMousePos.y + ((tileSize.y - 1) * Con::TILESIZE / 2)) });
+	RECT selectedTileRect = RECT{
+		selectedTilePoint.x, selectedTilePoint.y - tileSize.y + 1,
+		selectedTilePoint.x + tileSize.x - 1, selectedTilePoint.y };
+	return selectedTileRect;
+}
+
 pair<UI_MESSAGE, int> UIConstruction::MouseDown(POINT mousePos)
 {
 	if(isActive)
@@ -98,18 +110,12 @@ pair<UI_MESSAGE, int> UIConstruction::MouseDown(POINT mousePos)
 			{
 				int structureIdx = recipe->constructionIdx;
 				StructureInfo* info = gameData->GetStructureInfo(structureIdx);
-				POINT selectedTilePoint =
-					stage->PosToTile(POINT{
-						(int)(worldMousePos.x - ((info->GetTileSize().x - 1) * Con::TILESIZE / 2)),
-						(int)(worldMousePos.y + ((info->GetTileSize().y - 1) * Con::TILESIZE / 2)) });
-				RECT selectedTileRect = RECT{
-					selectedTilePoint.x, selectedTilePoint.y - info->GetTileSize().y + 1,
-					selectedTilePoint.x + info->GetTileSize().x - 1, selectedTilePoint.y };
+				RECT selectedTileRect = GetTileRect(worldMousePos, info->GetTileSize());
 					//stage->CenterPosToTile(worldMousePos, info->GetTileSize());
 				if (stage->CanBuild(selectedTileRect) &&
 					IsMaterialEnough(recipe->materials, Con::CONSTRUCTION_MATERIAL_MAX))
 				{
-					stage->BuildStructure(POINT{ selectedTilePoint.x, selectedTilePoint.y }, structureIdx);
+					stage->BuildStructure(POINT{ selectedTileRect.left, selectedTileRect.bottom }, structureIdx);
 					RemoveMaterial(recipe->materials, Con::CONSTRUCTION_MATERIAL_MAX);
 					return { UI_MESSAGE::OK, 0 };
 				}
@@ -133,14 +139,24 @@ pair<UI_MESSAGE, int> UIConstruction::MouseDown(POINT mousePos)
 				}
 			}
 		}
+		return { UI_MESSAGE::BLOCKED, 0 };
 	}
-
-	return { UI_MESSAGE::OK, 0 };
+	else
+	{
+		return { UI_MESSAGE::NONE, 0 };
+	}
 }
 
 pair<UI_MESSAGE, int> UIConstruction::MouseUp(POINT mousePos)
 {
-	return { UI_MESSAGE::NONE, 0 };
+	if (isActive)
+	{
+		return { UI_MESSAGE::BLOCKED, 0 };
+	}
+	else
+	{
+		return { UI_MESSAGE::NONE, 0 };
+	}
 }
 
 void UIConstruction::OnActivate()
@@ -176,7 +192,14 @@ void UIConstruction::Render(HDC hdc)
 				pos.x + constructionButtons[i].box.left + BUTTON_ICON_OFFSET.x,
 				pos.y + constructionButtons[i].box.top + BUTTON_ICON_OFFSET.y - constructionIconimg->GetFrameHeight(),
 				1.0f, false);
-			wsprintf(szText, "%s", gameData->GetStructureInfo(recipe->constructionIdx)->GetName().c_str());
+			if (recipe->constructionCategory == ConstructionCategory::STRUCTURE)
+			{
+				wsprintf(szText, "%s", gameData->GetStructureInfo(recipe->constructionIdx)->GetName().c_str());
+			}
+			else if (recipe->constructionCategory == ConstructionCategory::FLOOR)
+			{
+				wsprintf(szText, "%s", gameData->GetFloorInfo(recipe->constructionIdx)->name.c_str());
+			}
 			TextOut(hdc,
 				pos.x + constructionButtons[i].box.left + BUTTON_ICON_OFFSET.x + 32,
 				pos.y + constructionButtons[i].box.top + BUTTON_ICON_OFFSET.y - 20,
@@ -229,7 +252,43 @@ void UIConstruction::Render(HDC hdc)
 				if (recipe->constructionCategory == ConstructionCategory::STRUCTURE)
 				{
 					POINT tileSize = gameData->GetStructureInfo(recipe->constructionIdx)->GetTileSize();
-					if (tileSize.x == 1)
+					RECT selectedTileRect = GetTileRect(worldSpaceMouse, tileSize);
+					if (stage->CanBuild(selectedTileRect) &&
+						IsMaterialEnough(recipe->materials, Con::CONSTRUCTION_MATERIAL_MAX))
+					{
+						if (tileSize.x == 1)
+						{
+
+							POINT mouseGrid = stage->PosToTile(worldSpaceMouse);
+							mouseGrid.x = (mouseGrid.x * Con::TILESIZE) - 8;
+							mouseGrid.y = (mouseGrid.y * Con::TILESIZE) - 8;
+							selection1x1Img->StageRender(hdc,
+								mouseGrid.x, mouseGrid.y,
+								(int)(timerM->GetProgramTime() * 10.0f) % 10, 0, false, 1.0f);
+						}
+						if (tileSize.x == 2)
+						{
+							POINT mouseGrid = stage->PosToTile(
+								FPOINT{ (float)(worldSpaceMouse.x - (Con::TILESIZE / 2)),
+								(float)(worldSpaceMouse.y - (Con::TILESIZE / 2)) });
+							mouseGrid.x = (mouseGrid.x * Con::TILESIZE) - 4;
+							mouseGrid.y = (mouseGrid.y * Con::TILESIZE) - 4;
+							selection2x2Img->StageRender(hdc,
+								mouseGrid.x, mouseGrid.y,
+								(int)(timerM->GetProgramTime() * 10.0f) % 10, 0, false, 1.0f);
+						}
+					}
+				}
+				else if (recipe->constructionCategory == ConstructionCategory::FLOOR)
+				{
+					POINT selectedTile =
+						stage->PosToTile(worldSpaceMouse);
+					Terrain* selTerrain = stage->GetTerrain(selectedTile);
+					if (selTerrain &&
+						selTerrain->GetIsLand() == false &&
+						selTerrain->GetFloorIdx() == 0 &&
+						IsMaterialEnough(recipe->materials, Con::CONSTRUCTION_MATERIAL_MAX)
+						)
 					{
 						POINT mouseGrid = stage->PosToTile(worldSpaceMouse);
 						mouseGrid.x = (mouseGrid.x * Con::TILESIZE) - 8;
@@ -238,26 +297,6 @@ void UIConstruction::Render(HDC hdc)
 							mouseGrid.x, mouseGrid.y,
 							(int)(timerM->GetProgramTime() * 10.0f) % 10, 0, false, 1.0f);
 					}
-					if (tileSize.x == 2)
-					{
-						POINT mouseGrid = stage->PosToTile(
-							FPOINT{ (float)(worldSpaceMouse.x - (Con::TILESIZE / 2)),
-							(float)(worldSpaceMouse.y - (Con::TILESIZE / 2)) });
-						mouseGrid.x = (mouseGrid.x * Con::TILESIZE) - 4;
-						mouseGrid.y = (mouseGrid.y * Con::TILESIZE) - 4;
-						selection2x2Img->StageRender(hdc,
-							mouseGrid.x, mouseGrid.y,
-							(int)(timerM->GetProgramTime() * 10.0f) % 10, 0, false, 1.0f);
-					}
-				}
-				else if (recipe->constructionCategory == ConstructionCategory::FLOOR)
-				{
-					POINT mouseGrid = stage->PosToTile(worldSpaceMouse);
-					mouseGrid.x = (mouseGrid.x * Con::TILESIZE) - 8;
-					mouseGrid.y = (mouseGrid.y * Con::TILESIZE) - 8;
-					selection1x1Img->StageRender(hdc,
-						mouseGrid.x, mouseGrid.y,
-						(int)(timerM->GetProgramTime() * 10.0f) % 10, 0, false, 1.0f);
 				}
 			}
 		}

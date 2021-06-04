@@ -9,6 +9,8 @@ HRESULT TilemapTool::Init()
 {
     Camera* cam = Camera::GetSingleton();
     cam->SetScreenSize(POINT{ TILEMAPTOOLSIZE_X, TILEMAPTOOLSIZE_Y });
+    cam->SetScale(2.0f);
+    camPos = cam->GetPosCenter();
 
     SetClientRect(g_hWnd, TILEMAPTOOLSIZE_X, TILEMAPTOOLSIZE_Y);
 
@@ -155,30 +157,34 @@ void TilemapTool::Update()
     }
     
 
-    if (KeyManager::GetSingleton()->IsOnceKeyDown('P'))
+    if (KeyManager::GetSingleton()->IsOnceKeyDown(VK_ESCAPE))
     {
-        SceneManager::GetSingleton()->ChangeScene("전투_1");
+        SceneManager::GetSingleton()->ChangeScene("타이틀");
     }
 
     if (KeyManager::GetSingleton()->IsStayKeyDown('W'))
     {
-        FPOINT camCenter = cam->GetPosCenter();
-        cam->SetPosCenter(FPOINT{ camCenter.x, camCenter.y - (timerManager->GetElapsedTime() * 200.0f)});
+        camPos = cam->GetPosCenter();
+        camPos.y -= (timerManager->GetElapsedTime() * 400.0f);
+        cam->SetPosCenter(FPOINT{ camPos.x, camPos.y });
     }
     if (KeyManager::GetSingleton()->IsStayKeyDown('A'))
     {
-        FPOINT camCenter = cam->GetPosCenter();
-        cam->SetPosCenter(FPOINT{ camCenter.x - (timerManager->GetElapsedTime() * 200.0f), camCenter.y });
+        camPos = cam->GetPosCenter();
+        camPos.x -= (timerManager->GetElapsedTime() * 400.0f);
+        cam->SetPosCenter(FPOINT{ camPos.x, camPos.y });
     }
     if (KeyManager::GetSingleton()->IsStayKeyDown('S'))
     {
-        FPOINT camCenter = cam->GetPosCenter();
-        cam->SetPosCenter(FPOINT{ camCenter.x, camCenter.y + (timerManager->GetElapsedTime() * 200.0f) });
+        camPos = cam->GetPosCenter();
+        camPos.y += (timerManager->GetElapsedTime() * 400.0f);
+        cam->SetPosCenter(FPOINT{ camPos.x, camPos.y });
     }
     if (KeyManager::GetSingleton()->IsStayKeyDown('D'))
     {
-        FPOINT camCenter = cam->GetPosCenter();
-        cam->SetPosCenter(FPOINT{ camCenter.x + (timerManager->GetElapsedTime() * 200.0f), camCenter.y });
+        camPos = cam->GetPosCenter();
+        camPos.x += (timerManager->GetElapsedTime() * 400.0f);
+        cam->SetPosCenter(FPOINT{ camPos.x, camPos.y });
     }
 
     return;
@@ -188,9 +194,6 @@ void TilemapTool::Render(HDC hdc)
 {
     PatBlt(hdc, 0, 0,
         TILEMAPTOOLSIZE_X, TILEMAPTOOLSIZE_Y, WHITENESS);
-
-    // 샘플타일 전체
-    sampleTile->Render(hdc, TILEMAPTOOLSIZE_X - sampleTile->GetWidth(), 0);
 
     // 선택 영역 표시
     hOldSelectedBrush = (HBRUSH)SelectObject(hdc, hSelectedBrush);
@@ -235,6 +238,9 @@ void TilemapTool::Render(HDC hdc)
             }
         }
     }
+
+    // 샘플타일 전체
+    sampleTile->Render(hdc, TILEMAPTOOLSIZE_X - sampleTile->GetWidth(), 0);
 
 }
 

@@ -48,5 +48,7 @@ public:
 
 	inline void SetStage(Stage* stage) { this->stage = stage; }
 	inline void SetInventoryContainer(InventoryContainer* container) { this->container = container; }
+
+	RECT GetTileRect(FPOINT worldMousePos, POINT tileSize);
 };
 

@@ -35,6 +35,8 @@ private:
 	Button* btnSave;
 	Button* btnLoad;
 
+	FPOINT camPos;
+
 public:
 	virtual HRESULT Init();
 	virtual void Release();

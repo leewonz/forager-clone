@@ -3,6 +3,7 @@
 
 // 기존 MainGame 클래스의 내용을 이동
 
+class Image;
 class Stage;
 class StageObject;
 class Image;
@@ -25,6 +26,7 @@ private:
 	UICrafting* uiCrafting;
 	InventoryContainer* inventoryContainer;
 	DropContainer* dropContainer;
+	Image* keyboardEImg;
 
 	FPOINT camPos;
 

@@ -6,6 +6,7 @@ HRESULT UIContainer::Init()
 {
 	SetPos(FPOINT{ 0.0f, 0.0f });
 	tabImg = ImageManager::GetSingleton()->FindImage("ui_menuTab3");
+	tabIconImg = ImageManager::GetSingleton()->FindImage("ui_tabIcons");
 	tabSize = POINT{ tabImg->GetWidth(), tabImg->GetHeight() };
 	tabRect = RECT{ (LONG)TAB_POS.x, (LONG)TAB_POS.y,
 		(LONG)(TAB_POS.x + (tabSize.x * TAB_SCALE)), (LONG)(TAB_POS.y + (tabSize.y * TAB_SCALE)) };
@@ -53,6 +54,7 @@ pair<UI_MESSAGE, int> UIContainer::MouseDown(POINT mousePos)
 		{
 			SetActiveTab(tabNum);
 		}
+		childMessage = { UI_MESSAGE::OK, 0 };
 	}
 
 	if (isActive)
@@ -158,6 +160,18 @@ void UIContainer::Render(HDC hdc)
 		RECT tabBox = RECT{ (LONG)pos.x + tabRect.left, (LONG)pos.y + tabRect.top,
 							(LONG)pos.x + tabRect.right, (LONG)pos.y + tabRect.bottom };
 		tabImg->Render(hdc, tabBox.left, tabBox.top, TAB_SCALE, false);
+		tabIconImg->FrameRender(hdc,
+			tabBox.left + (int)(tabBox.right - tabBox.left) * 1 / 6,
+			(tabBox.top + tabBox.bottom) / 2, 1, 0,
+			true, (currActiveTab == 0) ? 3.0f : 2.0f);
+		tabIconImg->FrameRender(hdc,
+			tabBox.left + (int)(tabBox.right - tabBox.left) * 3 / 6,
+			(tabBox.top + tabBox.bottom) / 2, 2, 0,
+			true, (currActiveTab == 1) ? 3.0f : 2.0f);
+		tabIconImg->FrameRender(hdc,
+			tabBox.left + (int)(tabBox.right - tabBox.left) * 5 / 6,
+			(tabBox.top + tabBox.bottom) / 2, 4, 0,
+			true, (currActiveTab == 2) ? 3.0f : 2.0f);
 
 		for (int i = 0; i < children.size(); i++)
 		{

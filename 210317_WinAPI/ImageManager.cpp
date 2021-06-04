@@ -154,6 +154,10 @@ HRESULT ImageManager::Init()
     ImageManager::GetSingleton()->AddImage("ui_button",
         "Image/ui/button.bmp", 93, 33,
         true, RGB(255, 0, 255));
+    
+    ImageManager::GetSingleton()->AddImage("ui_buttonSmall",
+        "Image/ui/buttonSmall.bmp", 93, 25,
+        true, RGB(255, 0, 255));
 
     ImageManager::GetSingleton()->AddImage("ui_menuTab3",
         "Image/ui/menuTab3.bmp", 138, 48,
@@ -168,7 +172,11 @@ HRESULT ImageManager::Init()
         true, RGB(255, 0, 255));
 
     ImageManager::GetSingleton()->AddImage("ui_arrowSmall",
-        "Image/ui/menuTab3.bmp", 28, 20, 2, 1,
+        "Image/ui/arrowSmall.bmp", 28, 20, 2, 1,
+        true, RGB(255, 0, 255));
+
+    ImageManager::GetSingleton()->AddImage("ui_tabIcons",
+        "Image/ui/tabIcons.bmp", 160, 32, 5, 1,
         true, RGB(255, 0, 255));
 
     ImageManager::GetSingleton()->AddImage("landSelection1x1",
@@ -179,6 +187,19 @@ HRESULT ImageManager::Init()
         "Image/landSelection2x2.bmp", 400, 40, 10, 1,
         true, RGB(255, 0, 255));
 
+    ImageManager::GetSingleton()->AddImage("keyboardE",
+        "Image/keyboardE.bmp", 76, 72,
+        true, RGB(255, 0, 255));
+    
+    ImageManager::GetSingleton()->AddImage("progressCircle",
+        "Image/progressCircle.bmp", 256, 32, 8, 1,
+        true, RGB(255, 0, 255));
+
+    ImageManager::GetSingleton()->AddImage("title",
+        "Image/Title.bmp", 1190, 790,
+        true, RGB(255, 0, 255));
+
+    
     return S_OK;
 }
 

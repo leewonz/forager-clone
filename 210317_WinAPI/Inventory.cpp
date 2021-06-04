@@ -21,7 +21,7 @@ bool Inventory::AddItem(Item item)
 	bool isEmptyFound = false;
 
 	iter = iterFirstEmpty = items.begin();
-	for (iter = items.begin(); iter != items.end(); iter++)
+	for (iter = items.begin(); iter != items.end(); ++iter)
 	{
 		if (iter->idx == item.idx)
 		{
@@ -67,7 +67,7 @@ bool Inventory::AddItem(Item item, int slot)
 bool Inventory::RemoveItem(Item item)
 {
 	vector<Item>::iterator iter;
-	for (iter = items.begin(); iter != items.end(); iter++)
+	for (iter = items.begin(); iter != items.end(); ++iter)
 	{
 		if (iter->idx == item.idx)
 		{
@@ -141,7 +141,7 @@ int Inventory::GetItemCount(int idx)
 	vector<Item>::iterator iter;
 
 	iter = items.begin();
-	for (iter = items.begin(); iter != items.end(); iter++)
+	for (iter = items.begin(); iter != items.end(); ++iter)
 	{
 		if (iter->idx == idx)
 		{
@@ -154,7 +154,7 @@ int Inventory::GetItemCount(int idx)
 int Inventory::FindItem(int idx)
 {
 	vector<Item>::iterator iter;
-	for (iter = items.begin(); iter != items.end(); iter++)
+	for (iter = items.begin(); iter != items.end(); ++iter)
 	{
 		if (iter->idx == idx)
 		{

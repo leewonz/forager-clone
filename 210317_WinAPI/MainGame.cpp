@@ -2,7 +2,7 @@
 #include "Image.h"
 #include "TilemapTool.h"
 #include "GameScene.h"
-#include "AstarScene.h"
+#include "TitleScene.h"
 #include "Camera.h"
 #include "GameData.h"
 
@@ -32,9 +32,10 @@ HRESULT MainGame::Init()
 
 	SceneManager::GetSingleton()->AddScene("전투_1", new GameScene());
 	SceneManager::GetSingleton()->AddScene("타일맵툴", new TilemapTool());
-	SceneManager::GetSingleton()->AddScene("A*", new AstarScene());	
+	SceneManager::GetSingleton()->AddScene("타이틀", new TitleScene());
+	//SceneManager::GetSingleton()->AddScene("A*", new AstarScene());	
 
-	SceneManager::GetSingleton()->ChangeScene("타일맵툴");
+	SceneManager::GetSingleton()->ChangeScene("타이틀");
 
 	isInited = true;
 

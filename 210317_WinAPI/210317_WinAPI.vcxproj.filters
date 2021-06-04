@@ -90,9 +90,6 @@
     <ClCompile Include="Button.cpp">
       <Filter>2D Framework\UI\Button</Filter>
     </ClCompile>
-    <ClCompile Include="AstarScene.cpp">
-      <Filter>MainGame\Scene</Filter>
-    </ClCompile>
     <ClCompile Include="StageObject.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -156,6 +153,9 @@
     <ClCompile Include="UICrafting.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="TitleScene.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CommonFunction.h">
@@ -208,9 +208,6 @@
     </ClInclude>
     <ClInclude Include="Button.h">
       <Filter>2D Framework\UI\Button</Filter>
-    </ClInclude>
-    <ClInclude Include="AstarScene.h">
-      <Filter>MainGame\Scene</Filter>
     </ClInclude>
     <ClInclude Include="StageObject.h">
       <Filter>헤더 파일</Filter>
@@ -270,6 +267,9 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="UICrafting.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="TitleScene.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

@@ -29,8 +29,8 @@ public:
 
 	inline FPOINT GetPosCenter() 
 	{
-		return FPOINT{ (status.pos.x) + (status.scale * (float)status.screenSize.x * 0.5f),
-					   (status.pos.y) + (status.scale * (float)status.screenSize.y * 0.5f) };
+		return FPOINT{ (status.pos.x) + ((float)status.screenSize.x * 0.5f / status.scale),
+					   (status.pos.y) + ((float)status.screenSize.y * 0.5f / status.scale) };
 	}
 
 	inline void SetPosCenter(FPOINT pos) 

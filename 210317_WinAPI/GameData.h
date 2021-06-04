@@ -138,6 +138,8 @@ public:
 	inline int GetConstructionRecipeCount() { return constructionRecipes.size(); }
 	inline int GetCraftingRecipeCount() { return craftingRecipes.size(); }
 
+	inline string GetTerrainTypeName(int i) { return terrainTypeNames[i]; }
+
 	int FindItemInfo(string codeName);
 	int FindStructureInfo(string codeName);
 	int FindFloorInfo(string codeName);

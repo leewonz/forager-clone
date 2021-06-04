@@ -20,6 +20,7 @@ class UICrafting :
 	const int BUTTON_MAX_COUNT = 100;
 
 	Image* buttonImg;
+	Image* buttonSmallImg;
 	Image* bgImg;
 	Image* arrowImg;
 	InventoryContainer* inventoryContainer;
@@ -27,10 +28,15 @@ class UICrafting :
 	Structure* structure;
 
 	POINT buttonSize;
+	POINT buttonSmallSize;
 	POINT resultBGPoint;
 	POINT craftButtonPoint;
 	POINT craftInfiniteButtonPoint;
+	POINT craftStopButtonPoint;
+	RECT arrowLRect;
+	RECT arrowRRect;
 	int selectedRecipe = -1;
+	int craftAmount = 1;
 
 	char szText[128] = "";
 

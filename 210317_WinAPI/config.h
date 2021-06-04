@@ -45,6 +45,11 @@ namespace Con
 	const int CONSTRUCTION_MATERIAL_MAX = 4;
 	const int RESOURCE_DROP_MAX = 4;
 	const int CRAFTING_MATERIAL_MAX = 4;
+
+	const string TEXT_CRAFTING_AMOUNT = "개수: ";
+	const string TEXT_CRAFTING_START_BUTTON = "개 제작";
+	const string TEXT_CRAFTING_INFINITE_BUTTON = "무한 제작";
+	const string TEXT_CRAFTING_STOP_BUTTON = "제작 취소";
 }
 
 #define DEBUG_DRAW 0; 
@@ -65,8 +70,10 @@ namespace Con
 #define TILEMAPTOOLSIZE_Y	800
 #define GAMESCENESIZE_X		1280
 #define GAMESCENESIZE_Y		800
-#define ASTARSIZE_X	1620
-#define ASTARSIZE_Y	900
+#define TITLESCENESIZE_X	1280
+#define TITLESCENESIZE_Y	800
+//#define ASTARSIZE_X	1620
+//#define ASTARSIZE_Y	900
 
 #define PI			3.141592f
 #define DegToRad(x)	((x) * PI / 180.0f)

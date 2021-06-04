@@ -12,6 +12,7 @@ private:
 
 	vector<UIObject*> children;
 	Image* tabImg;
+	Image* tabIconImg;
 	POINT tabSize;
 	RECT tabRect;
 	int currActiveTab = 0;
